@@ -43,8 +43,8 @@ the initial twenty SVG characters, animation system, UI, styles, build script an
 
 ChatGPT prepared the brief from my direction, reviewed and refined the generated
 code, corrected state transitions and packaging, and ran arithmetic and browser
-checks. The result uses HTML, CSS and JavaScript with a BooCalc-specific AI-generated sprite atlas,
-external fonts, dependencies or paid APIs. The current illustrated buttons and ghosts were generated with OpenAI image
+checks on earlier versions. The result uses HTML, CSS and JavaScript with BooCalc-specific AI-generated sprite art,
+with no external fonts, runtime dependencies or paid APIs. The current illustrated buttons and ghosts were generated with OpenAI image
 generation from my direction, then integrated by ChatGPT. Kiro authored the
 initial SVG character system before that visual replacement. The public development log identifies
 which work came from each tool.
@@ -79,7 +79,7 @@ callbacks had to be prevented from replacing a more recent operator's reaction.
 - A self-contained application with no external runtime dependencies.
 - Fifty-one passing arithmetic and regression tests.
 - Keyboard support, ES/EN copy and optional motion.
-- Verified desktop use and 390 × 844 / 375 × 667 browser iframe layouts.
+- Earlier browser checks covered desktop use and 390 × 844 / 375 × 667 iframe layouts.
 
 ## What is next
 Browser review of the latest exact-frame correction (the current preview attempt
