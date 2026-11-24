@@ -1,0 +1,19 @@
+{
+  "name": "boocalc",
+  "description": "Primary sequential BooCalc implementation session with project-only file access and no delegation.",
+  "prompt": "You are the single primary developer for BooCalc. Follow PROJECT_BRIEF.md. Work sequentially and directly. Do not delegate, spawn agents, invoke workflows, execute shell commands, access external services or modify your own configuration. Read and write only project files. First write requirements, design and tasks under .kiro/specs/boocalc and concise .kiro/steering/product.md. Then implement all requested source files, original SVG art, CSS animation scenes, tests and a standalone HTML build. ChatGPT will run commands and browser checks separately; do not claim checks you did not run. Preserve .openai hosting identity. Do not modify .kiro/agents. Finish the implementation without unnecessary questions.",
+  "tools": ["read", "write"],
+  "excludedTools": ["subagent", "invoke_sub_agent", "orchestrate_subagent"],
+  "includeMcpJson": false,
+  "includePowers": false,
+  "resources": ["file://PROJECT_BRIEF.md"],
+  "permissions": {
+    "rules": [
+      {"capability": "fs_read", "match": ["/workspace/scratch/80017d3be8a2/boo-calculator/**"], "effect": "allow"},
+      {"capability": "fs_write", "match": ["/workspace/scratch/80017d3be8a2/boo-calculator/**"], "effect": "allow"},
+      {"capability": "fs_write", "match": ["/workspace/scratch/80017d3be8a2/boo-calculator/.kiro/agents/**", "/workspace/scratch/80017d3be8a2/boo-calculator/.openai/**"], "effect": "deny"},
+      {"capability": "subagent", "match": ["*"], "effect": "deny"},
+      {"capability": "shell", "match": ["*"], "effect": "deny"}
+    ]
+  }
+}

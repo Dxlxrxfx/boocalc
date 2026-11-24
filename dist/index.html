@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BooCalc — calculadora kawaii con fantasmas en un cementerio encantador">
+  <title>BooCalc 👻</title>
+  <style>
+/* ─── BooCalc — Main Stylesheet ───────────────────────────────────────────────
+   Cemetery dusk palette, kawaii tombstone keys, ghost animations.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Reset & base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Palette */
+  --sky-dark:    #1a1240;
+  --sky-mid:     #2d1f5e;
+  --sky-light:   #3d2b6b;
+  --ground:      #1e1c14;
+  --ground-mid:  #2a2a1e;
+  --stone:       #5a5a6a;
+  --stone-light: #7a7a8a;
+  --stone-pale:  #8a8878;
+  --moss:        #4a6040;
+  --moss-light:  #6a8060;
+  --lavender:    #b89ac8;
+  --lavender-dk: #8060a8;
+  --ivory:       #f0ece8;
+  --mist:        rgba(220,215,240,0.12);
+  --display-bg:  #0d0a1a;
+  --display-txt: #e8e0f0;
+  --display-dim: #9080b0;
+  --moon:        #f8f0d8;
+  --op-bg:       #4a3870;
+  --op-hover:    #6050a0;
+  --op-primary:  #7a50b8;
+  --eq-bg:       #c060a8;
+  --eq-hover:    #e070c0;
+  --special-bg:  #2e2a40;
+  --special-hover:#4a4460;
+  --clear-bg:    #c05040;
+  --clear-hover: #e06050;
+  --key-radius:  12px;
+  --key-gap:     8px;
+
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--display-txt);
+}
+
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  background: linear-gradient(180deg,
+    var(--sky-dark) 0%,
+    var(--sky-mid)  40%,
+    var(--sky-light) 65%,
+    #2a1e3a 80%,
+    var(--ground-mid) 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Cemetery stage ────────────────────────────────────────────────────────── */
+.stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  max-width: 1440px;
+  flex: 1;
+  position: relative;
+  padding: 20px 16px 32px;
+  gap: 0;
+}
+
+.scene-deco {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 300px;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 900px) {
+  .scene-deco { display: none; }
+}
+
+/* ── Moon ──────────────────────────────────────────────────────────────────── */
+.moon {
+  position: fixed;
+  top: 32px;
+  right: 10%;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fffcf0, var(--moon) 60%, #d8c880);
+  box-shadow: 0 0 40px rgba(248,240,200,0.5), 0 0 80px rgba(248,240,200,0.2);
+  pointer-events: none;
+}
+
+/* ── Mist ──────────────────────────────────────────────────────────────────── */
+.mist-layer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 160px;
+  pointer-events: none;
+  overflow: hidden;
+}
+.mist-band {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 60px;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(200,195,230,0.08) 20%,
+    rgba(210,205,240,0.14) 50%,
+    rgba(200,195,230,0.08) 80%, transparent 100%);
+  border-radius: 50%;
+}
+.mist-band:nth-child(1) { bottom: 0;  animation: mistDrift 12s ease-in-out infinite; }
+.mist-band:nth-child(2) { bottom: 20px; animation: mistDrift 18s ease-in-out infinite reverse; opacity:.7; }
+.mist-band:nth-child(3) { bottom: 40px; animation: mistDrift 22s ease-in-out infinite; opacity:.5; }
+
+@keyframes mistDrift {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(8%); }
+}
+
+/* ── Decorative background gravestones (SVG inline in HTML) ─────────────────── */
+.bg-stones {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  padding-bottom: 8px;
+  opacity: 0.6;
+}
+
+/* ── Calculator widget ─────────────────────────────────────────────────────── */
+.calculator {
+  flex: 0 0 auto;
+  width: min(420px, 100%);
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 440px) {
+  .calculator { width: 100%; max-width: 100%; }
+}
+
+/* ── Display panel ─────────────────────────────────────────────────────────── */
+#display-panel {
+  background: var(--display-bg);
+  border-radius: 20px 20px 8px 8px;
+  border: 1.5px solid rgba(184,154,200,0.3);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 8px 32px rgba(0,0,0,0.6),
+    0 0 60px rgba(100,60,160,0.15);
+  padding: 16px 20px 20px;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  overflow: hidden;
+  position: relative;
+}
+
+#display-panel::before {
+  content: 'BooCalc';
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lavender);
+  opacity: 0.6;
+}
+
+/* Ghost face in display corner */
+#display-panel::after {
+  content: '👻';
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  font-size: 16px;
+  opacity: 0.4;
+}
+
+#display-expr {
+  font-size: 0.9rem;
+  color: var(--display-dim);
+  min-height: 1.2em;
+  text-align: right;
+  word-break: break-all;
+  transition: opacity 0.2s;
+}
+
+#display-value {
+  font-size: 2.8rem;
+  font-weight: 300;
+  color: var(--display-txt);
+  text-align: right;
+  line-height: 1.1;
+  word-break: break-all;
+  letter-spacing: -0.5px;
+  transition: font-size 0.15s;
+}
+
+@keyframes resultFlourish {
+  0%   { transform: scale(0.7); opacity: 0.5; }
+  60%  { transform: scale(1.08); }
+  80%  { transform: scale(0.97); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+#display-value.result-flourish {
+  animation: resultFlourish 0.5s cubic-bezier(.36,.07,.19,.97) forwards;
+}
+
+/* ── Keypad grid ───────────────────────────────────────────────────────────── */
+#keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--key-gap);
+}
+
+/* ── Base key ──────────────────────────────────────────────────────────────── */
+.key {
+  position: relative;
+  border: none;
+  border-radius: var(--key-radius);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--display-txt);
+  cursor: pointer;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s, box-shadow 0.08s, filter 0.08s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  overflow: hidden;
+}
+
+.key:focus-visible {
+  outline: 2.5px solid var(--lavender);
+  outline-offset: 2px;
+}
+
+.key:active,
+.key.pressed {
+  transform: scale(0.93) translateY(2px);
+  filter: brightness(1.15);
+}
+
+/* ── Tombstone number keys ─────────────────────────────────────────────────── */
+.key--tombstone {
+  background: linear-gradient(180deg,
+    #8a8898 0%,
+    #6a6878 40%,
+    #5a5868 70%,
+    #4e4c5c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 4px 0 #2a2838,
+    0 5px 0 #1a1826,
+    0 6px 8px rgba(0,0,0,0.5);
+  border-radius: 50% 50% 8px 8px / 30% 30% 8px 8px;
+  /* Stone texture via noise-like gradient */
+  background-image:
+    linear-gradient(180deg, #8a8898, #5a5868),
+    repeating-linear-gradient(45deg,
+      transparent, transparent 2px,
+      rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+  color: var(--ivory);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+/* Moss strip at bottom */
+.key--tombstone::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 4px; right: 4px; height: 5px;
+  background: linear-gradient(90deg, #3a5030, #5a7050, #3a5030);
+  border-radius: 0 0 6px 6px;
+  opacity: 0.75;
+}
+
+/* Engraved numeral effect: inset text shadow */
+.key--tombstone .key-label {
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.15),
+    0 -1px 0 rgba(0,0,0,0.5),
+    0 0 8px rgba(200,195,240,0.2);
+  position: relative;
+  z-index: 1;
+}
+
+/* Tombstone "feet" — subtle wider base */
+.key--tombstone::before {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: -3px; right: -3px; height: 7px;
+  background: #3a3848;
+  border-radius: 0 0 4px 4px;
+  z-index: -1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.key--tombstone:hover {
+  filter: brightness(1.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    0 4px 0 #2a2838,
+    0 5px 0 #1a1826,
+    0 6px 12px rgba(0,0,0,0.5),
+    0 0 16px rgba(180,160,220,0.2);
+}
+
+/* ── Operator keys ─────────────────────────────────────────────────────────── */
+.key--op {
+  background: linear-gradient(145deg, #5a4480, #3a2860);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    0 4px 0 #1e1440,
+    0 5px 8px rgba(0,0,0,0.4);
+  color: #e8d8f8;
+  font-size: 1.5rem;
+}
+
+.key--op:hover {
+  background: linear-gradient(145deg, #7060a8, #504080);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 4px 0 #1e1440,
+    0 0 20px rgba(140,100,200,0.3);
+}
+
+.key--op-primary {
+  background: linear-gradient(145deg, #8060b8, #5840a0);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.key--op-primary:hover {
+  background: linear-gradient(145deg, #a080d8, #7060b8);
+}
+
+.key--op-eq {
+  background: linear-gradient(145deg, #c868b0, #a04898);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 4px 0 #602080,
+    0 5px 12px rgba(180,60,140,0.4);
+}
+
+.key--op-eq:hover {
+  background: linear-gradient(145deg, #e080c8, #c060b0);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    0 4px 0 #602080,
+    0 0 24px rgba(200,80,160,0.5);
+}
+
+/* ── Special keys (AC, ±, ⌫) ────────────────────────────────────────────────── */
+.key--special {
+  background: linear-gradient(145deg, #3a3454, #252040);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 4px 0 #101020,
+    0 5px 8px rgba(0,0,0,0.4);
+  color: var(--lavender);
+  font-size: 1.1rem;
+}
+
+.key--special:hover {
+  background: linear-gradient(145deg, #504868, #352e50);
+}
+
+.key--clear {
+  background: linear-gradient(145deg, #a04838, #782830);
+  color: #ffe8e0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    0 4px 0 #481820,
+    0 5px 10px rgba(0,0,0,0.5);
+}
+
+.key--clear:hover {
+  background: linear-gradient(145deg, #c05848, #983040);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 4px 0 #481820,
+    0 0 20px rgba(180,60,50,0.4);
+}
+
+/* ── Ghost overlay ─────────────────────────────────────────────────────────── */
+#ghost-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* ── Ghost sprite base ─────────────────────────────────────────────────────── */
+.ghost-sprite {
+  position: absolute;
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  z-index: 101;
+}
+
+.ghost-sprite svg {
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+
+/* ── Emotion scene animations ──────────────────────────────────────────────── */
+
+/* + bounce */
+@keyframes ghostBounce {
+  0%,100% { transform: translateY(0) scale(1); }
+  25%     { transform: translateY(-28px) scale(1.1); }
+  50%     { transform: translateY(-8px) scale(0.95); }
+  75%     { transform: translateY(-22px) scale(1.08); }
+}
+
+.scene-bounce {
+  animation: ghostBounce 1.4s ease-in-out 3;
+  opacity: 1;
+}
+
+/* − cry */
+@keyframes ghostCry {
+  0%,100% { transform: translateX(0) rotate(0deg); }
+  25%     { transform: translateX(-3px) rotate(-2deg); }
+  75%     { transform: translateX(3px) rotate(2deg); }
+}
+
+.scene-cry {
+  animation: ghostCry 0.5s ease-in-out 3;
+  opacity: 1;
+}
+
+@keyframes tearFall {
+  0%   { transform: translateY(0) scaleX(1); opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { transform: translateY(40px) scaleX(0.6); opacity: 0; }
+}
+
+.tear-drop {
+  animation: tearFall 0.9s ease-in forwards;
+}
+
+/* × hug */
+@keyframes ghostHugLeft {
+  0%   { transform: translateX(0); }
+  60%  { transform: translateX(44px) scale(1.05); }
+  80%  { transform: translateX(40px) scale(1.1); }
+  100% { transform: translateX(42px) scale(1.08); opacity: 0; }
+}
+
+@keyframes ghostHugRight {
+  0%   { transform: translateX(0); }
+  60%  { transform: translateX(-44px) scale(1.05); }
+  80%  { transform: translateX(-40px) scale(1.1); }
+  100% { transform: translateX(-42px) scale(1.08); opacity: 0; }
+}
+
+.scene-hug-left  { animation: ghostHugLeft  1.2s ease-in-out forwards; }
+.scene-hug-right { animation: ghostHugRight 1.2s ease-in-out forwards; }
+
+/* ÷ groups */
+@keyframes ghostGroup {
+  0%   { transform: translate(0,0) scale(1); opacity: 1; }
+  40%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.scene-group { animation: ghostGroup 1.6s ease-out forwards; }
+
+/* % joke */
+@keyframes pctPop {
+  0%   { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+  20%  { transform: scale(1.1) rotate(3deg);  opacity: 1; }
+  30%  { transform: scale(1) rotate(0deg); }
+  80%  { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0.8) rotate(5deg);  opacity: 0; }
+}
+
+.scene-pct-container {
+  animation: pctPop 2.8s cubic-bezier(.36,.07,.19,.97) forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 180px;
+}
+
+.pct-bubble {
+  background: rgba(10,6,24,0.92);
+  color: var(--ivory);
+  border: 1.5px solid var(--lavender);
+  border-radius: 14px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  text-align: center;
+  line-height: 1.3;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  max-width: 180px;
+}
+
+.pct-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: var(--lavender);
+}
+
+/* = dance */
+@keyframes ghostDance0 {
+  0%   { transform: rotate(0deg) translateX(50px) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: rotate(360deg) translateX(50px) rotate(-360deg) scale(0.6); opacity: 0; }
+}
+@keyframes ghostDance1 {
+  0%   { transform: rotate(120deg) translateX(50px) rotate(-120deg) scale(1); opacity: 1; }
+  100% { transform: rotate(480deg) translateX(50px) rotate(-480deg) scale(0.6); opacity: 0; }
+}
+@keyframes ghostDance2 {
+  0%   { transform: rotate(240deg) translateX(50px) rotate(-240deg) scale(1); opacity: 1; }
+  100% { transform: rotate(600deg) translateX(50px) rotate(-600deg) scale(0.6); opacity: 0; }
+}
+
+.scene-dance-0 { animation: ghostDance0 1.6s ease-in-out forwards; }
+.scene-dance-1 { animation: ghostDance1 1.6s ease-in-out forwards; }
+.scene-dance-2 { animation: ghostDance2 1.6s ease-in-out forwards; }
+
+/* ── Controls bar ──────────────────────────────────────────────────────────── */
+#controls {
+  margin-top: 4px;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ctrl-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.ctrl-label {
+  font-size: 0.72rem;
+  color: var(--display-dim);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  color: var(--lavender);
+  font-size: 0.72rem;
+}
+
+.toggle-btn:focus-visible {
+  outline: 2px solid var(--lavender);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.toggle-track {
+  display: inline-flex;
+  width: 30px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--lavender-dk);
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggle-btn[aria-pressed="false"] .toggle-track {
+  background: #3a3450;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.toggle-btn[aria-pressed="true"] .toggle-thumb {
+  transform: translateX(14px);
+}
+
+.toggle-text {
+  min-width: 20px;
+}
+
+.help-btn {
+  background: none;
+  border: 1px solid rgba(184,154,200,0.4);
+  border-radius: 20px;
+  padding: 4px 12px;
+  color: var(--lavender);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  letter-spacing: 0.3px;
+}
+
+.help-btn:hover {
+  background: rgba(184,154,200,0.1);
+  border-color: var(--lavender);
+}
+
+.help-btn:focus-visible {
+  outline: 2px solid var(--lavender);
+  outline-offset: 2px;
+}
+
+/* ── Help popover ──────────────────────────────────────────────────────────── */
+#help-popover {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,6,24,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(4px);
+}
+
+.help-content {
+  background: #1a1430;
+  border: 1.5px solid var(--lavender);
+  border-radius: 20px;
+  padding: 28px 32px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.6), 0 0 60px rgba(100,60,160,0.2);
+}
+
+.help-content h2 {
+  font-size: 1.1rem;
+  color: var(--lavender);
+  margin-bottom: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.help-content ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.help-content li {
+  font-size: 0.85rem;
+  color: var(--ivory);
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.help-close {
+  display: block;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #8060b8, #c060a8);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 28px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.help-close:hover { filter: brightness(1.15); }
+.help-close:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+
+/* ── Screen reader only ────────────────────────────────────────────────────── */
+#sr-announce {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ── Background decorative SVG tombstones ──────────────────────────────────── */
+.bg-stone {
+  opacity: 0.55;
+}
+
+/* ── Responsive: mobile ────────────────────────────────────────────────────── */
+@media (max-width: 440px) {
+  :root { --key-gap: 6px; }
+  #display-value { font-size: 2.4rem; }
+  .key { height: 60px; font-size: 1.15rem; }
+  .key--tombstone { font-size: 1.1rem; }
+  .calculator { gap: 8px; }
+  #display-panel { padding: 12px 14px 16px; min-height: 90px; }
+  .controls-row { gap: 7px; }
+  .moon { width: 50px; height: 50px; top: 20px; right: 6%; }
+  .pct-bubble { font-size: 0.68rem; padding: 6px 10px; max-width: 150px; }
+  .scene-pct-container { width: 150px; }
+}
+
+/* ── Responsive: short screens ─────────────────────────────────────────────── */
+@media (max-height: 600px) {
+  .key { height: 52px; }
+  #display-panel { min-height: 70px; padding: 8px 14px 12px; }
+  #display-value { font-size: 2rem; }
+  .stage { padding-top: 8px; padding-bottom: 16px; }
+  .mist-layer { display: none; }
+}
+
+/* ── Reduced motion override ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .scene-bounce, .scene-cry, .tear-drop,
+  .scene-hug-left, .scene-hug-right, .scene-group,
+  .scene-pct-container, .scene-dance-0, .scene-dance-1, .scene-dance-2,
+  .ghost-sprite, .mist-band {
+    animation: none !important;
+    transition: none !important;
+  }
+  #display-value.result-flourish { animation: none !important; }
+}
+
+/* ── Decorative scene elements ─────────────────────────────────────────────── */
+.scene-tree {
+  opacity: 0.5;
+}
+
+
+/* Visual refinement after browser review — ChatGPT. */
+:root {
+  --sky-dark:#20262d; --sky-mid:#30343d; --sky-light:#3f414d;
+  --display-bg:#202d2c; --display-txt:#f0eee3; --display-dim:#bdc3b0;
+  --lavender:#beb0c8; --ivory:#f1eee4;
+  font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;
+}
+body {
+  background:radial-gradient(ellipse at 73% 10%,#58546555,transparent 40%),
+    linear-gradient(180deg,#232a31 0%,#383d45 56%,#414b42 100%);
+  isolation:isolate; min-height:100svh;
+}
+.cemetery-world {position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.cemetery-world>svg {width:100%;height:100%;display:block}
+.app-header {position:relative;text-align:center;padding:26px 20px 8px;z-index:12;flex:none}
+.app-header h1 {font-family:Georgia,"Times New Roman",serif;font-size:2.8rem;line-height:1;letter-spacing:-1.8px;color:#eeece1;font-weight:400}
+.app-header h1 span {color:#bbc9ae}
+.app-header p {font-size:.9rem;line-height:1.4;color:#c0c8bc;margin-top:10px;letter-spacing:.01em}
+.brand-ghost {display:inline-block;vertical-align:middle;position:absolute;width:42px;height:50px;left:calc(50% - 145px);top:24px;transform:rotate(-12deg)}
+.brand-ghost svg {width:100%;height:100%}
+.stage {max-width:1160px;align-items:center;flex:1;padding:18px 20px 34px}
+.scene-deco {display:none}
+.moon {width:70px;height:70px;top:11%;right:17%;background:radial-gradient(circle at 35% 30%,#f0edce,#d4d3b7);box-shadow:0 0 55px #dedbc529,0 0 120px #dedbc517;z-index:-1}
+.moon::before {content:"";position:absolute;width:6px;height:6px;border-radius:50%;top:35px;left:21px;background:#9c9e88;box-shadow:22px 0 #9c9e88}
+.moon::after {content:"";position:absolute;width:12px;height:6px;border-bottom:2px solid #9c9e88;border-radius:50%;top:41px;left:29px}
+.mist-layer {opacity:.55;z-index:1;height:110px}
+.calculator {width:min(424px,100%);max-width:424px;gap:14px;filter:drop-shadow(0 18px 28px #101b2055)}
+#display-panel {min-height:190px;padding:43px 23px 17px;border:1px solid #8e9b834d;border-radius:30px 30px 14px 14px;background:radial-gradient(ellipse at 22% 25%,#607b6033,transparent 65%),linear-gradient(145deg,#253632,#1a2528);box-shadow:inset 0 0 0 5px #c3cab808,inset 0 1px #bfc8b733,0 5px 0 #1d2928;}
+#display-panel::before {content:attr(data-caption);top:18px;left:23px;font-family:inherit;font-size:.75rem;letter-spacing:.06em;color:#b4c0ab;opacity:.9;text-transform:none}
+#display-panel::after {content:"✧";right:22px;top:14px;color:#bdc6b0;font-size:1.5rem;opacity:.8}
+#display-expr {font-size:1rem;color:#c1c6b9;min-height:24px;width:100%;text-align:right;overflow-wrap:anywhere;margin-top:auto}
+#display-value {font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;font-size:3rem;font-weight:400;line-height:1.15;letter-spacing:-1px;color:#f0f1e4;text-shadow:0 0 16px #b5d6b02b;max-width:100%;overflow-wrap:anywhere;}
+#keypad {gap:11px 12px;padding:2px 3px 6px}
+.key {height:72px;font-size:1.45rem;border:1px solid #bdc6b021;background:#38433e;box-shadow:inset 0 1px #e4eadf18,0 5px #25302b,0 8px 10px #18221e33;border-radius:17px;color:#e4e6d9;}
+.key--tombstone {border-radius:39px 39px 8px 8px;border:1px solid #b1b6a261;background:repeating-linear-gradient(105deg,#ffffff03 0 1px,transparent 1px 8px),linear-gradient(165deg,#8c9185,#6b756a 62%,#59665b);box-shadow:inset 3px 2px 0 #d5d4bb22,inset -3px 0 #28342b25,0 5px 0 #394d3c,0 8px 9px #18241d55;}
+.key--tombstone .key-label {font-family:Georgia,serif;font-size:1.75rem;font-weight:400;text-shadow:0 -1px 1px #26392e,0 1px #e0e1cb88;transform:translateY(4px);}
+.key--tombstone::before {content:"✦";z-index:0;top:7px;bottom:auto;left:0;right:0;height:14px;color:#b4b9a1;font-size:.62rem;background:none;box-shadow:none;border-radius:0;text-align:center;}
+.key--tombstone::after {height:5px;left:3px;right:3px;bottom:0;background:linear-gradient(90deg,#657c4e,#84936a,#5f784d);border-radius:4px 6px 4px 2px;opacity:.9}
+.key--tombstone:hover {filter:brightness(1.14);box-shadow:inset 3px 2px 0 #d5d4bb33,0 5px 0 #394d3c,0 9px 15px #18241d55;}
+.key--op,.key--op-primary {background:linear-gradient(150deg,#566759,#3b5045);color:#e5edda;border-color:#a0b38d33;box-shadow:inset 0 1px #e2ebd322,0 5px #2b3d30,0 8px 8px #18241d44;font-size:1.8rem;}
+.key--op:hover,.key--op-primary:hover {background:linear-gradient(150deg,#657c62,#46604c);box-shadow:0 5px #2b3d30,0 0 18px #b1c69c22;}
+.key--op-eq {background:linear-gradient(145deg,#bdc9a1,#93ad83);color:#2a4033;border-color:#cedbb8;box-shadow:inset 0 1px #edf0d966,0 5px #668260,0 8px 12px #18241d55;}
+.key--op-eq:hover {background:linear-gradient(145deg,#d0dab3,#a3bd91);box-shadow:0 5px #668260,0 8px 16px #18241d55;}
+.key--special {background:linear-gradient(150deg,#4d5257,#3b4448);color:#dadcd4;box-shadow:inset 0 1px #ffffff17,0 5px #2a3539,0 8px 8px #18241d33;}
+.key--clear {background:linear-gradient(150deg,#756268,#5a5059);color:#f0e2e3;border-color:#c5aebf33;box-shadow:inset 0 1px #d8c7d322,0 5px #403e48,0 8px 8px #18241d33;font-size:1.1rem;}
+.key--special:hover,.key--clear:hover {filter:brightness(1.13);}
+#controls {padding:7px 2px 0;margin:0;}
+.controls-row {gap:11px 15px;justify-content:center;align-items:center;flex-wrap:wrap;}
+.ctrl-label {font-size:.75rem;letter-spacing:.02em;color:#c4cbbb;text-transform:none;}
+.toggle-text {font-size:.75rem;color:#c4cbbb;}
+.ctrl-toggle {gap:6px}
+.toggle-track {background:#51654d!important;box-shadow:inset 0 1px 3px #17261d88;}
+.toggle-thumb {background:#e8eadc!important;}
+.toggle-off .toggle-track {background:#3b4547!important;}
+.help-btn {font-size:.875rem;color:#e0e4d5;border-color:#c2cbbb55;background:#23342b77;padding:6px 13px;border-radius:20px;}
+.pct-bubble {font-size:.9rem;line-height:1.4;background:#eff0df;color:#344639;border:2px solid #a9ba95;box-shadow:0 5px 0 #263e3266;max-width:215px;padding:12px 14px}
+.pct-bubble::after {border-top-color:#a9ba95}
+.scene-pct-container {width:215px}
+.help-content {background:#283832;color:#e7e9dc;border:1px solid #92a58266;}
+.help-content h2 {font-family:Georgia,serif;font-weight:400;color:#d4dfbd;}
+.help-content li {font-size:1rem;line-height:1.6;color:#d7decf;}
+.help-close {background:#a8bc91;color:#263b2c;border-color:#bdcba8;}
+@keyframes ghostHugLeft {0%{transform:translateX(0)}55%{transform:translateX(var(--hug-dx,65px)) rotate(9deg)}75%{transform:translateX(var(--hug-dx,65px)) rotate(4deg) scale(1.07)}100%{transform:translateX(var(--hug-dx,65px)) rotate(4deg) scale(.98);opacity:0}}
+@keyframes ghostHugRight {0%{transform:translateX(0)}55%{transform:translateX(calc(-1 * var(--hug-dx,65px))) rotate(-9deg)}75%{transform:translateX(calc(-1 * var(--hug-dx,65px))) rotate(-4deg) scale(1.07)}100%{transform:translateX(calc(-1 * var(--hug-dx,65px))) rotate(-4deg) scale(.98);opacity:0}}
+@keyframes ghostGroup {0%{transform:translateX(var(--group-from,55px)) scale(.8);opacity:.2}50%,80%{transform:translateX(0) scale(1);opacity:1}100%{transform:translateX(0) scale(.8);opacity:0}}
+@media(max-width:600px){
+ .app-header{padding:22px 12px 8px}.app-header h1{font-size:2.3rem}.app-header p{font-size:.875rem;margin-top:8px}.brand-ghost{left:calc(50% - 124px);top:18px;width:36px;height:44px}
+ .stage{padding:12px 18px 25px;align-items:center}.calculator{gap:12px}#display-panel{min-height:150px;padding:37px 20px 14px;border-radius:25px 25px 12px 12px}
+ #display-panel::before{font-size:.75rem;top:14px;left:19px}#display-value{font-size:2.7rem}#display-expr{font-size:.9rem}#keypad{gap:10px 10px;padding:2px 2px 6px}.key{height:60px}.key--tombstone{border-radius:35px 35px 7px 7px}.key--tombstone .key-label{font-size:1.6rem}
+ .moon{width:50px;height:50px;top:15%;right:8%}.moon::before{top:24px;left:14px;width:4px;height:4px;box-shadow:17px 0 #9c9e88}.moon::after{top:28px;left:20px;width:10px}
+ .controls-row{gap:10px 13px}.ctrl-label,.toggle-text{font-size:.75rem}.cemetery-world{opacity:.65}
+}
+@media(max-height:740px){.app-header{padding-top:12px}.app-header h1{font-size:2rem}.app-header p{margin-top:5px;font-size:.8rem}.brand-ghost{top:8px;width:31px;height:38px;left:calc(50% - 112px)}.stage{padding-top:8px;padding-bottom:16px}.calculator{gap:10px}#display-panel{min-height:124px;padding-top:32px}#display-value{font-size:2.5rem}.key{height:55px}#keypad{gap:8px 10px}.key--tombstone .key-label{font-size:1.5rem}#controls{padding-top:5px}.controls-row{gap:8px 11px}}
+@media(prefers-reduced-motion:reduce){.mist-band{animation:none!important}}
+
+/* Readable control labels at all viewport sizes. */
+.ctrl-label{font-size:.875rem}.toggle-text{font-size:.8125rem}
+
+</style>
+</head>
+<body>
+
+<!-- Screen reader live region -->
+<div id="sr-announce" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Ghost animation overlay (pointer-events: none) -->
+<div id="ghost-overlay" aria-hidden="true"></div>
+
+<!-- Moon -->
+<div class="moon" aria-hidden="true"></div>
+
+<div class="cemetery-world" aria-hidden="true">
+  <svg viewBox="0 0 1440 1000" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="hill" x2="0" y2="1"><stop stop-color="#465047"/><stop offset="1" stop-color="#2c3732"/></linearGradient>
+      <symbol id="cypress" viewBox="0 0 80 220"><path d="M35 210V140H45V210" fill="#242e2a"/><path d="M40 5C22 32 24 46 16 72C5 97 15 102 9 129C0 171 20 180 40 180C64 180 80 169 69 139C75 110 63 99 64 78C63 51 52 28 40 5Z" fill="#303d37"/><path d="M40 35V163" fill="none" stroke="#465148" stroke-width="3" opacity=".6"/></symbol>
+      <symbol id="grave" viewBox="0 0 70 94"><path d="M9 86V35A26 26 0 0 1 61 35V86" fill="#69716b" stroke="#353f3a" stroke-width="3"/><path d="M17 72V35A18 18 0 0 1 53 35V72" fill="none" stroke="#858c80" stroke-width="1.5" opacity=".6"/><path d="M4 85H66V93H4Z" fill="#48564a"/><path d="M24 50H46M28 57H42" stroke="#424d46" stroke-linecap="round" stroke-width="3"/><path d="M11 84L17 77L23 86L28 79L36 87" fill="#758460"/></symbol>
+      <symbol id="flower" viewBox="0 0 30 40"><path d="M15 38V15M15 30Q2 32 5 23Q12 22 15 30" fill="#7d8a68" stroke="#7d8a68" stroke-width="2"/><g fill="#c8b6bf"><circle cx="10" cy="10" r="5"/><circle cx="20" cy="10" r="5"/><circle cx="15" cy="5" r="5"/><circle cx="15" cy="16" r="5"/></g><circle cx="15" cy="11" r="4" fill="#d8d1a5"/></symbol>
+    </defs>
+    <g fill="#d7dbc8" opacity=".55"><circle cx="210" cy="205" r="2"/><circle cx="370" cy="130" r="2"/><circle cx="1050" cy="185" r="2"/><circle cx="1260" cy="330" r="2"/><path d="M335 320v12m-6-6h12M1120 125v12m-6-6h12M140 440v12m-6-6h12" stroke="#d7dbc8" stroke-width="1.5"/></g>
+    <path d="M0 810Q190 630 420 775Q700 670 930 760Q1170 620 1440 760V1000H0Z" fill="#35413b"/>
+    <g opacity=".8"><use href="#cypress" x="92" y="542" width="80" height="220"/><use href="#cypress" x="130" y="590" width="64" height="176"/><use href="#cypress" x="1234" y="548" width="80" height="220"/><use href="#cypress" x="1283" y="606" width="55" height="151"/></g>
+    <path d="M0 880Q250 713 470 835Q790 715 1020 825Q1240 720 1440 810V1000H0Z" fill="url(#hill)"/>
+    <g opacity=".75"><use href="#grave" x="246" y="742" width="65" height="87" transform="rotate(-9 280 790)"/><use href="#grave" x="345" y="800" width="46" height="62"/><use href="#grave" x="1105" y="744" width="62" height="83" transform="rotate(8 1135 785)"/><use href="#grave" x="1020" y="820" width="45" height="60"/></g>
+    <path d="M0 971Q270 860 500 947Q770 858 1020 948Q1240 879 1440 924V1000H0Z" fill="#26342d"/>
+    <g opacity=".85"><use href="#flower" x="198" y="867" width="23" height="32"/><use href="#flower" x="225" y="883" width="16" height="23"/><use href="#flower" x="1195" y="859" width="23" height="32"/></g>
+  </svg>
+</div>
+
+<header class="app-header">
+  <span class="brand-ghost" aria-hidden="true"><svg viewBox="0 0 50 60"><path d="M8 48V26C8 3 42 3 42 26V49L35 44L28 50L21 45L14 51Z" fill="#eeeade" stroke="#aaaeb1" stroke-width="1.5"/><ellipse cx="19" cy="27" rx="2.5" ry="3.5" fill="#3d4647"/><ellipse cx="32" cy="27" rx="2.5" ry="3.5" fill="#3d4647"/><path d="M22 34Q25 38 29 34" fill="none" stroke="#3d4647" stroke-linecap="round" stroke-width="2"/><ellipse cx="13" cy="33" rx="4" ry="2.5" fill="#d3a8af"/><ellipse cx="37" cy="33" rx="4" ry="2.5" fill="#d3a8af"/></svg></span>
+  <h1>Boo<span>Calc</span></h1>
+  <p data-i18n="brandLine">Un fantasma detrás de cada número.</p>
+</header>
+
+<!-- Mist -->
+<div class="mist-layer" aria-hidden="true">
+  <div class="mist-band"></div>
+  <div class="mist-band"></div>
+  <div class="mist-band"></div>
+</div>
+
+<!-- Cemetery stage -->
+<div class="stage">
+
+  <!-- Left decorative scene -->
+  <div class="scene-deco scene-deco--left" aria-hidden="true">
+    <div class="bg-stones">
+      <!-- Small tombstone 1 -->
+      <svg class="bg-stone" viewBox="0 0 36 54" width="36" height="54">
+        <rect x="4" y="18" width="28" height="30" rx="2" fill="#4a4858"/>
+        <ellipse cx="18" cy="18" rx="14" ry="14" fill="#4a4858"/>
+        <rect x="2" y="46" width="32" height="6" rx="2" fill="#3a3848"/>
+        <text x="18" y="30" text-anchor="middle" font-size="10" fill="#6a6878" font-family="serif">R.I.P</text>
+        <rect x="6" y="44" width="24" height="3" rx="1" fill="#3a5030" opacity=".7"/>
+      </svg>
+      <!-- Small tombstone 2 -->
+      <svg class="bg-stone" viewBox="0 0 44 60" width="44" height="60">
+        <rect x="6" y="20" width="32" height="34" rx="2" fill="#52505e"/>
+        <ellipse cx="22" cy="20" rx="16" ry="16" fill="#52505e"/>
+        <rect x="3" y="51" width="38" height="7" rx="2" fill="#3e3c4c"/>
+        <line x1="22" y1="8" x2="22" y2="36" stroke="#3a3848" stroke-width="1.5" opacity=".5"/>
+        <line x1="14" y1="16" x2="30" y2="28" stroke="#3a3848" stroke-width="1.5" opacity=".4"/>
+        <rect x="8" y="48" width="28" height="4" rx="1" fill="#3a5030" opacity=".6"/>
+      </svg>
+      <!-- Tiny cross marker -->
+      <svg class="bg-stone" viewBox="0 0 20 36" width="20" height="36">
+        <rect x="8" y="0" width="4" height="20" rx="1.5" fill="#3a3848"/>
+        <rect x="2" y="6" width="16" height="4" rx="1.5" fill="#3a3848"/>
+        <rect x="4" y="28" width="12" height="8" rx="1" fill="#2e2c3c"/>
+        <rect x="4" y="34" width="12" height="3" rx="1" fill="#3a5030" opacity=".6"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Calculator -->
+  <main class="calculator" role="main" aria-label="BooCalc">
+
+    <!-- Display -->
+    <section id="display-panel" aria-label="Pantalla de la calculadora" data-caption="Entre números y apariciones">
+      <div id="display-expr" aria-hidden="true"></div>
+      <div id="display-value" role="text" aria-label="Resultado actual">0</div>
+    </section>
+
+    <!-- Keypad -->
+    <div id="keypad" role="group" aria-label="Teclado numérico"></div>
+
+    <!-- Controls -->
+    <div id="controls" role="group" aria-label="Controles"></div>
+
+  </main>
+
+  <!-- Right decorative scene -->
+  <div class="scene-deco scene-deco--right" aria-hidden="true">
+    <div class="bg-stones">
+      <!-- Obelisk -->
+      <svg class="bg-stone" viewBox="0 0 24 70" width="24" height="70">
+        <polygon points="12,2 7,20 17,20" fill="#4a4858"/>
+        <rect x="6" y="18" width="12" height="40" fill="#4a4858"/>
+        <rect x="4" y="56" width="16" height="8" rx="1" fill="#3a3848"/>
+        <rect x="4" y="61" width="16" height="3" rx="1" fill="#3a5030" opacity=".6"/>
+      </svg>
+      <!-- Round top stone -->
+      <svg class="bg-stone" viewBox="0 0 50 65" width="50" height="65">
+        <rect x="8" y="22" width="34" height="37" rx="2" fill="#52505e"/>
+        <ellipse cx="25" cy="22" rx="17" ry="17" fill="#52505e"/>
+        <rect x="4" y="55" width="42" height="8" rx="2" fill="#3e3c4c"/>
+        <text x="25" y="36" text-anchor="middle" font-size="9" fill="#7070a0" opacity=".7" font-family="serif">✦</text>
+        <text x="25" y="48" text-anchor="middle" font-size="8" fill="#7070a0" opacity=".5" font-family="serif">∞</text>
+        <rect x="6" y="58" width="38" height="4" rx="1" fill="#3a5030" opacity=".65"/>
+      </svg>
+      <!-- Tiny stone -->
+      <svg class="bg-stone" viewBox="0 0 30 44" width="30" height="44">
+        <rect x="4" y="14" width="22" height="24" rx="2" fill="#454354"/>
+        <ellipse cx="15" cy="14" rx="11" ry="11" fill="#454354"/>
+        <rect x="2" y="34" width="26" height="6" rx="2" fill="#353344"/>
+        <rect x="4" y="37" width="22" height="3" rx="1" fill="#3a5030" opacity=".6"/>
+      </svg>
+    </div>
+  </div>
+
+</div><!-- .stage -->
+
+<script>
+
+'use strict';
+const __booModules = Object.create(null);
+__booModules["engine.js"] = (() => {
+/**
+ * BooCalc — Calculator Engine
+ * Pure logic, zero DOM, no eval, no new Function.
+ *
+ * Design:
+ *   State holds a flat `terms` array: [n0, op1, n1, op2, n2, ...]
+ *   The current input `buffer` holds the in-progress right-hand operand.
+ *   `waitingForOperand` is true when an operator was just entered and no
+ *   new digit has been typed yet — used to detect operator replacement.
+ *
+ * Precedence:
+ *   evalTerms does two passes: first collapses × and ÷, then + and −.
+ *   Gives standard math: 2+3×4 = 14.
+ *
+ * Percent: operand ÷ 100. Never contextual. 50% → 0.5.
+ *
+ * Float precision: toPrecision(12) + parseFloat strips noise.
+ *   0.1 + 0.2 = 0.3 ✓
+ */
+
+
+// ─── Operators ────────────────────────────────────────────────────────────────
+
+const OP_ADD = '+';
+const OP_SUB = '−';
+const OP_MUL = '×';
+const OP_DIV = '÷';
+
+const ERROR_DIV_ZERO = '__DIV_ZERO__';
+
+const HIGH_PREC = new Set([OP_MUL, OP_DIV]);
+
+// ─── Precision ────────────────────────────────────────────────────────────────
+
+function cleanNum(n) {
+  if (!isFinite(n)) return n;
+  return parseFloat(n.toPrecision(12));
+}
+
+// ─── Arithmetic ───────────────────────────────────────────────────────────────
+
+function applyOp(a, op, b) {
+  switch (op) {
+    case OP_ADD: return cleanNum(a + b);
+    case OP_SUB: return cleanNum(a - b);
+    case OP_MUL: return cleanNum(a * b);
+    case OP_DIV: return b === 0 ? ERROR_DIV_ZERO : cleanNum(a / b);
+    default:     throw new Error(`Unknown op: ${op}`);
+  }
+}
+
+// ─── Evaluator ────────────────────────────────────────────────────────────────
+
+/**
+ * Evaluate [n0, op1, n1, op2, n2, ...] with standard precedence.
+ * Returns a number or ERROR_DIV_ZERO.
+ */
+function evalTerms(terms) {
+  if (terms.length === 0)  return 0;
+  if (terms.length === 1)  return cleanNum(terms[0]);
+
+  // Pass 1: collapse × ÷ into additive terms
+  const add = [];   // will hold [n, op, n, op, ...] for + − only
+  let acc = terms[0];
+  for (let i = 1; i < terms.length; i += 2) {
+    const op  = terms[i];
+    const rhs = terms[i + 1];
+    if (HIGH_PREC.has(op)) {
+      const r = applyOp(acc, op, rhs);
+      if (r === ERROR_DIV_ZERO) return ERROR_DIV_ZERO;
+      acc = r;
+    } else {
+      add.push(acc, op);
+      acc = rhs;
+    }
+  }
+  add.push(acc);
+
+  // Pass 2: collapse + −
+  let total = add[0];
+  for (let i = 1; i < add.length; i += 2) {
+    const r = applyOp(total, add[i], add[i + 1]);
+    if (r === ERROR_DIV_ZERO) return ERROR_DIV_ZERO;
+    total = r;
+  }
+  return total;
+}
+
+// ─── State ────────────────────────────────────────────────────────────────────
+
+function createState() {
+  return {
+    terms: [],             // completed expression so far: [n, op, n, op, ...]
+    buffer: '0',           // current operand as a string
+    waitingForOperand: false, // true right after an operator press
+    justResult: false,     // true right after = press
+    resultValue: null,     // numeric value when justResult
+    error: false,
+  };
+}
+
+// ─── Buffer helpers ───────────────────────────────────────────────────────────
+
+function bufStr(state) { return state.buffer; }
+
+function bufNum(state) {
+  const s = state.buffer.replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+// ─── Digit ────────────────────────────────────────────────────────────────────
+
+function inputDigit(state, digit) {
+  if (!/^[0-9]$/.test(digit)) return state;
+  if (state.error) return { ...createState(), buffer: digit === '0' ? '0' : digit };
+
+  // After a completed result: start fresh
+  if (state.justResult) {
+    return { ...createState(), buffer: digit === '0' ? '0' : digit };
+  }
+
+  // After an operator: start a new operand
+  if (state.waitingForOperand) {
+    return { ...state, buffer: digit, waitingForOperand: false };
+  }
+
+  const buf = state.buffer;
+  const digits = buf.replace(/[^0-9]/g, '').length;
+  if (digits >= 12) return state;
+
+  const newBuf =
+    buf === '0'  ? digit :
+    buf === '-0' ? '-' + digit :
+    buf + digit;
+
+  return { ...state, buffer: newBuf };
+}
+
+// ─── Decimal ──────────────────────────────────────────────────────────────────
+
+function inputDecimal(state) {
+  if (state.error) return { ...createState(), buffer: '0.' };
+  if (state.justResult) return { ...createState(), buffer: '0.' };
+
+  if (state.waitingForOperand) {
+    return { ...state, buffer: '0.', waitingForOperand: false };
+  }
+
+  if (state.buffer.includes('.')) return state;
+  return { ...state, buffer: state.buffer + '.' };
+}
+
+// ─── Operator ────────────────────────────────────────────────────────────────
+
+function inputOperator(state, op) {
+  if (state.error) return state;
+  if (![OP_ADD, OP_SUB, OP_MUL, OP_DIV].includes(op)) return state;
+
+  // After a completed result: continue from that result
+  if (state.justResult) {
+    return {
+      ...createState(),
+      terms: [bufNum(state), op],
+      buffer: state.buffer,
+      waitingForOperand: true,
+    };
+  }
+
+  // Operator replacement: waiting for operand and have a pending op in terms
+  if (state.waitingForOperand && state.terms.length > 0 && state.terms.length % 2 === 0) {
+    // terms length is even means: ends with an operator (n, op, n, op, ...)
+    // Wait — terms = [n, op, n, op] is length 4 (even) ending with op.
+    // Replace the last op.
+    const newTerms = [...state.terms.slice(0, -1), op];
+    return { ...state, terms: newTerms };
+  }
+
+  // Normal: push current buffer value and new op into terms
+  const n = bufNum(state);
+  const newTerms = [...state.terms, n, op];
+  return {
+    ...state,
+    terms: newTerms,
+    waitingForOperand: true,
+    justResult: false,
+  };
+}
+
+// ─── Equals ──────────────────────────────────────────────────────────────────
+
+function inputEquals(state) {
+  if (state.error) return state;
+  if (state.justResult) return state; // idempotent
+
+  const rhs = bufNum(state);
+
+  let allTerms;
+  if (state.terms.length === 0) {
+    // No pending operation — just show current number
+    allTerms = [rhs];
+  } else if (state.waitingForOperand) {
+    allTerms = state.terms.slice(0, -1);
+  } else {
+    // terms = [n0, op1, n1, op2, ...] ending with an op (odd length after adding rhs)
+    allTerms = [...state.terms, rhs];
+  }
+
+  const result = evalTerms(allTerms);
+
+  if (result === ERROR_DIV_ZERO) {
+    return { ...createState(), error: true };
+  }
+  if (!Number.isFinite(result)) return { ...createState(), error: true, errorCode: 'RANGE' };
+
+  const resultStr = String(result);
+  return {
+    ...createState(),
+    buffer: resultStr,
+    justResult: true,
+    resultValue: result,
+  };
+}
+
+// ─── Percent ─────────────────────────────────────────────────────────────────
+
+function inputPercent(state) {
+  if (state.error) return state;
+  const n = bufNum(state);
+  const result = cleanNum(n / 100);
+  return { ...state, buffer: String(result), waitingForOperand: false, justResult: false, resultValue: null };
+}
+
+// ─── Negate ──────────────────────────────────────────────────────────────────
+
+function inputNegate(state) {
+  if (state.error) return state;
+  if (state.waitingForOperand) return { ...state, buffer: '-0', waitingForOperand: false };
+  const buf = state.buffer;
+  if (buf === '0' || buf === '0.') return state;
+  const newBuf = buf.startsWith('-') ? buf.slice(1) : '-' + buf;
+  return { ...state, buffer: newBuf, resultValue: state.justResult ? parseFloat(newBuf) : null };
+}
+
+// ─── Backspace ───────────────────────────────────────────────────────────────
+
+function inputBackspace(state) {
+  if (state.error) return createState();
+  if (state.justResult) return createState();
+  if (state.waitingForOperand) return { ...state, terms: state.terms.slice(0, -2), waitingForOperand: false };
+
+  const buf = state.buffer;
+  if (buf.length <= 1 || (buf.length === 2 && buf[0] === '-')) {
+    return { ...state, buffer: '0' };
+  }
+  return { ...state, buffer: buf.slice(0, -1) };
+}
+
+// ─── Clear ───────────────────────────────────────────────────────────────────
+
+function inputClear(state) {
+  return createState();
+}
+
+// ─── Display helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Format a numeric string for display using locale decimal separator.
+ */
+function formatDisplay(value, lang = 'es') {
+  const s = String(value);
+  return lang === 'es' ? s.replace('.', ',') : s;
+}
+
+/**
+ * Build the expression hint shown above the main number.
+ * Reflects committed terms only (not the current buffer).
+ */
+function buildExprString(state, lang = 'es') {
+  if (state.error || state.terms.length === 0) return '';
+  const sep = lang === 'es' ? ',' : '.';
+  return state.terms.map((t, i) => {
+    if (typeof t === 'string') return ' ' + t + ' ';
+    return String(t).replace('.', sep);
+  }).join('');
+}
+
+/**
+ * Get the display value string for the current state.
+ */
+function getDisplayValue(state, lang = 'es') {
+  if (state.error && state.errorCode === 'RANGE') return lang === 'es' ? 'Error: fuera de rango' : 'Error: out of range';
+  if (state.error) {
+    return lang === 'es' ? 'Error: ÷ entre 0' : 'Error: ÷ by 0';
+  }
+  return formatDisplay(state.buffer, lang);
+}
+
+return {OP_ADD,OP_SUB,OP_MUL,OP_DIV,ERROR_DIV_ZERO,cleanNum,applyOp,evalTerms,createState,inputDigit,inputDecimal,inputOperator,inputEquals,inputPercent,inputNegate,inputBackspace,inputClear,formatDisplay,buildExprString,getDisplayValue};
+})();
+__booModules["ghosts.js"] = (() => {
+/**
+ * BooCalc — Ghost SVG Library
+ * 20 unique kawaii ghost variants, one per calculator key.
+ * Each function returns an SVG string (60×70px viewBox).
+ * Variants differ in silhouette, face, accessory, and soft accent color.
+ */
+
+
+// ─── Shared SVG primitives ────────────────────────────────────────────────────
+
+/**
+ * Base ghost body path.
+ * cx, cy = center top of body. w = half-width. h = body height.
+ */
+function ghostBody(cx, cy, w, h, fill, stroke) {
+  const x = cx - w;
+  const bx = cx + w;
+  const bottom = cy + h;
+  // Wavy bottom hem — 3 bumps
+  const bumpH = 10;
+  const bw = (w * 2) / 3;
+  return `
+    <path d="
+      M ${x} ${cy + w * 0.9}
+      Q ${x} ${cy - w * 0.3} ${cx} ${cy - w * 0.3}
+      Q ${bx} ${cy - w * 0.3} ${bx} ${cy + w * 0.9}
+      L ${bx} ${bottom - bumpH}
+      Q ${cx + bw} ${bottom} ${cx} ${bottom - bumpH}
+      Q ${cx - bw} ${bottom} ${x} ${bottom - bumpH}
+      Z
+    " fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
+}
+
+/**
+ * Simple round ghost body (wider, more blob-like).
+ */
+function roundBody(cx, cy, rx, ry, fill, stroke) {
+  const bottom = cy + ry;
+  const bumpH = 8;
+  const bw = rx * 0.7;
+  return `
+    <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry * 0.7}" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    <rect x="${cx - rx}" y="${cy}" width="${rx * 2}" height="${ry * 0.3 + bumpH}" fill="${fill}"/>
+    <path d="
+      M ${cx - rx} ${cy}
+      L ${cx - rx} ${bottom - bumpH}
+      Q ${cx - bw / 2} ${bottom} ${cx} ${bottom - bumpH}
+      Q ${cx + bw / 2} ${bottom} ${cx + rx} ${bottom - bumpH}
+      L ${cx + rx} ${cy}
+    " fill="${fill}" stroke="${stroke}" stroke-width="1.5" stroke-linejoin="round"/>`;
+}
+
+function eyes(cx, cy, col = '#2a1a3a') {
+  return `
+    <ellipse cx="${cx - 7}" cy="${cy}" rx="3" ry="3.5" fill="${col}"/>
+    <ellipse cx="${cx + 7}" cy="${cy}" rx="3" ry="3.5" fill="${col}"/>
+    <ellipse cx="${cx - 6}" cy="${cy - 1}" rx="1" ry="1" fill="white" opacity=".7"/>
+    <ellipse cx="${cx + 8}" cy="${cy - 1}" rx="1" ry="1" fill="white" opacity=".7"/>`;
+}
+
+function cheeks(cx, cy) {
+  return `
+    <ellipse cx="${cx - 11}" cy="${cy + 3}" rx="5" ry="3.5" fill="#f4a0b0" opacity=".55"/>
+    <ellipse cx="${cx + 11}" cy="${cy + 3}" rx="5" ry="3.5" fill="#f4a0b0" opacity=".55"/>`;
+}
+
+function smileHappy(cx, cy) {
+  return `<path d="M ${cx - 6} ${cy} Q ${cx} ${cy + 7} ${cx + 6} ${cy}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>`;
+}
+
+function smileSad(cx, cy) {
+  return `<path d="M ${cx - 6} ${cy + 5} Q ${cx} ${cy - 1} ${cx + 6} ${cy + 5}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>`;
+}
+
+function smileSmirk(cx, cy) {
+  return `<path d="M ${cx - 4} ${cy + 3} Q ${cx + 2} ${cy + 1} ${cx + 6} ${cy + 4}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>`;
+}
+
+function mouthO(cx, cy) {
+  return `<ellipse cx="${cx}" cy="${cy + 2}" rx="3.5" ry="3" fill="#2a1a3a"/>`;
+}
+
+function mouthGrin(cx, cy) {
+  return `
+    <path d="M ${cx - 7} ${cy} Q ${cx} ${cy + 9} ${cx + 7} ${cy}" fill="#2a1a3a" stroke="#2a1a3a" stroke-width="1"/>
+    <path d="M ${cx - 7} ${cy} Q ${cx} ${cy + 9} ${cx + 7} ${cy}" fill="none" stroke="#2a1a3a" stroke-width="1.5"/>`;
+}
+
+// Drop shadow filter
+const FILTER_SHADOW = `<filter id="gs" x="-20%" y="-20%" width="140%" height="140%">
+  <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
+</filter>`;
+
+function svgWrap(id, content) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 70" width="60" height="70" role="img" aria-hidden="true" data-ghost="${id}">
+  <defs>${FILTER_SHADOW}</defs>
+  <g filter="url(#gs)">
+  ${content}
+  </g>
+</svg>`;
+}
+
+// ─── 20 Ghost Variants ────────────────────────────────────────────────────────
+
+/** AC — Witch hat, surprised expression, lavender accent */
+function ghostAC() {
+  const fill = '#e8e4f8', stroke = '#b89ac8';
+  const cx = 30, cy = 36;
+  return svgWrap('ac', `
+    ${ghostBody(cx, cy, 18, 28, fill, stroke)}
+    <!-- Witch hat -->
+    <polygon points="30,8 22,24 38,24" fill="#3a2a5a" stroke="#5a4a7a" stroke-width="1"/>
+    <rect x="19" y="22" width="22" height="4" rx="2" fill="#5a4a7a"/>
+    <!-- Hat star -->
+    <polygon points="30,12 31.2,15.6 35,15.6 32,17.8 33.2,21.4 30,19.2 26.8,21.4 28,17.8 25,15.6 28.8,15.6" fill="#f0d060" transform="scale(.5) translate(30,8)"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${mouthO(cx, cy + 2)}
+  `);
+}
+
+/** ± — Star wand, winking, teal accent */
+function ghostPM() {
+  const fill = '#e4f4f8', stroke = '#80c8d0';
+  const cx = 30, cy = 36;
+  return svgWrap('pm', `
+    ${ghostBody(cx, cy, 18, 28, fill, stroke)}
+    <!-- Wand -->
+    <line x1="44" y1="20" x2="52" y2="12" stroke="#c0a040" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="52,8 53.5,12.5 58,12.5 54.3,15.3 55.8,19.8 52,17 48.2,19.8 49.7,15.3 46,12.5 50.5,12.5" fill="#f8e040" transform="scale(.7) translate(21,0)"/>
+    <!-- Eyes: wink right -->
+    <ellipse cx="${cx - 7}" cy="${cy - 4}" rx="3" ry="3.5" fill="#2a1a3a"/>
+    <ellipse cx="${cx - 6}" cy="${cy - 5}" rx="1" ry="1" fill="white" opacity=".7"/>
+    <path d="M ${cx + 4} ${cy - 5} Q ${cx + 7} ${cy - 2} ${cx + 10} ${cy - 5}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 3)}
+  `);
+}
+
+/** % — Smirk, speech-bubble ready, golden accent */
+function ghostPCT() {
+  const fill = '#f8f4e0', stroke = '#c8b060';
+  const cx = 30, cy = 38;
+  return svgWrap('pct', `
+    ${ghostBody(cx, cy, 18, 26, fill, stroke)}
+    <!-- Raised eyebrow -->
+    <path d="M ${cx - 10} ${cy - 7} Q ${cx - 7} ${cy - 10} ${cx - 4} ${cy - 7}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileSmirk(cx, cy + 3)}
+  `);
+}
+
+/** ÷ — Split tail silhouette, calm eyes, sky blue accent */
+function ghostDIV() {
+  const fill = '#e0ecf8', stroke = '#7098c0';
+  const cx = 30, cy = 34;
+  return svgWrap('div', `
+    <!-- Split tail body -->
+    <path d="
+      M 12 ${cy + 8}
+      Q 12 ${cy - 10} ${cx} ${cy - 10}
+      Q 48 ${cy - 10} 48 ${cy + 8}
+      L 48 56
+      Q 42 60 36 55
+      Q 30 62 24 55
+      Q 18 60 12 56
+      Z
+    " fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    ${eyes(cx, cy - 2)}
+    ${cheeks(cx, cy)}
+    ${smileHappy(cx, cy + 5)}
+  `);
+}
+
+/** 7 — Tiny bow, happy, rose accent */
+function ghost7() {
+  const fill = '#f8e8f0', stroke = '#d088a8';
+  const cx = 30, cy = 36;
+  return svgWrap('7', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Bow -->
+    <path d="M 22,18 Q 26,22 30,18 Q 34,22 38,18 Q 34,14 30,18 Q 26,14 22,18 Z" fill="${stroke}" opacity=".9"/>
+    <circle cx="30" cy="18" r="2.5" fill="#f8d0e0"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 3)}
+  `);
+}
+
+/** 8 — Glasses, grin, lime green accent */
+function ghost8() {
+  const fill = '#ecf8e4', stroke = '#90c870';
+  const cx = 30, cy = 36;
+  return svgWrap('8', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Glasses -->
+    <rect x="17" y="${cy - 8}" width="10" height="8" rx="4" fill="none" stroke="#2a1a3a" stroke-width="1.5"/>
+    <rect x="33" y="${cy - 8}" width="10" height="8" rx="4" fill="none" stroke="#2a1a3a" stroke-width="1.5"/>
+    <line x1="27" y1="${cy - 4}" x2="33" y2="${cy - 4}" stroke="#2a1a3a" stroke-width="1.5"/>
+    <line x1="17" y1="${cy - 4}" x2="13" y2="${cy - 6}" stroke="#2a1a3a" stroke-width="1.5"/>
+    <line x1="43" y1="${cy - 4}" x2="47" y2="${cy - 6}" stroke="#2a1a3a" stroke-width="1.5"/>
+    <!-- Eyes behind glasses -->
+    <ellipse cx="${cx - 7}" cy="${cy - 4}" rx="2.5" ry="2.5" fill="#2a1a3a"/>
+    <ellipse cx="${cx + 7}" cy="${cy - 4}" rx="2.5" ry="2.5" fill="#2a1a3a"/>
+    ${cheeks(cx, cy - 2)}
+    ${mouthGrin(cx, cy + 4)}
+  `);
+}
+
+/** 9 — Flower crown, gentle expression, peach accent */
+function ghost9() {
+  const fill = '#f8ede4', stroke = '#d0906a';
+  const cx = 30, cy = 36;
+  return svgWrap('9', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Flower crown -->
+    <circle cx="20" cy="22" r="4" fill="#f4d060" opacity=".9"/>
+    <circle cx="30" cy="18" r="4.5" fill="#f8a0b8" opacity=".9"/>
+    <circle cx="40" cy="22" r="4" fill="#b0d890" opacity=".9"/>
+    <circle cx="20" cy="22" r="2" fill="#f8f0d0"/>
+    <circle cx="30" cy="18" r="2.5" fill="#f8f0d0"/>
+    <circle cx="40" cy="22" r="2" fill="#f8f0d0"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 3)}
+  `);
+}
+
+/** × — Heart eyes, loving, coral accent */
+function ghostMUL() {
+  const fill = '#f8e8e8', stroke = '#d08880';
+  const cx = 30, cy = 36;
+  return svgWrap('mul', `
+    ${ghostBody(cx, cy, 18, 28, fill, stroke)}
+    <!-- Heart eyes -->
+    <path d="M ${cx - 10} ${cy - 6} C ${cx - 10} ${cy - 10} ${cx - 4} ${cy - 10} ${cx - 4} ${cy - 6} C ${cx - 4} ${cy - 2} ${cx - 10} ${cy} ${cx - 10} ${cy} C ${cx - 10} ${cy} ${cx - 16} ${cy - 2} ${cx - 16} ${cy - 6} C ${cx - 16} ${cy - 10} ${cx - 10} ${cy - 10} ${cx - 10} ${cy - 6} Z" fill="#e04060"/>
+    <path d="M ${cx + 10} ${cy - 6} C ${cx + 10} ${cy - 10} ${cx + 16} ${cy - 10} ${cx + 16} ${cy - 6} C ${cx + 16} ${cy - 2} ${cx + 10} ${cy} ${cx + 10} ${cy} C ${cx + 10} ${cy} ${cx + 4} ${cy - 2} ${cx + 4} ${cy - 6} C ${cx + 4} ${cy - 10} ${cx + 10} ${cy - 10} ${cx + 10} ${cy - 6} Z" fill="#e04060"/>
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 4)}
+  `);
+}
+
+/** 4 — Scarf, cozy expression, steel blue accent */
+function ghost4() {
+  const fill = '#e8eef8', stroke = '#7898c8';
+  const cx = 30, cy = 36;
+  return svgWrap('4', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Scarf -->
+    <path d="M 14 ${cy + 6} Q 30 ${cy + 2} 46 ${cy + 6} Q 46 ${cy + 12} 30 ${cy + 10} Q 14 ${cy + 12} 14 ${cy + 6} Z" fill="#c84040" opacity=".85"/>
+    <path d="M 36 ${cy + 6} Q 38 ${cy + 14} 34 ${cy + 20}" stroke="#c84040" stroke-width="5" stroke-linecap="round" fill="none" opacity=".85"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 1)}
+  `);
+}
+
+/** 5 — Party hat, excited, gold accent */
+function ghost5() {
+  const fill = '#f8f4e0', stroke = '#c8a840';
+  const cx = 30, cy = 36;
+  return svgWrap('5', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Party hat -->
+    <polygon points="${cx},10 ${cx - 12},26 ${cx + 12},26" fill="#e04888" stroke="#c03070" stroke-width="1"/>
+    <circle cx="${cx}" cy="10" r="3" fill="#f8f040"/>
+    <!-- Polka dots on hat -->
+    <circle cx="${cx - 4}" cy="20" r="1.5" fill="white" opacity=".8"/>
+    <circle cx="${cx + 4}" cy="17" r="1.5" fill="white" opacity=".8"/>
+    <!-- Confetti -->
+    <rect x="10" y="14" width="4" height="3" rx="1" fill="#40c8d0" transform="rotate(-20,12,16)" opacity=".8"/>
+    <rect x="44" y="18" width="4" height="3" rx="1" fill="#c040c8" transform="rotate(15,46,20)" opacity=".8"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${mouthO(cx, cy + 3)}
+  `);
+}
+
+/** 6 — Music notes, singing expression, violet accent */
+function ghost6() {
+  const fill = '#ece8f8', stroke = '#9880d0';
+  const cx = 30, cy = 36;
+  return svgWrap('6', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Music notes -->
+    <text x="8" y="22" font-size="11" fill="#6050a0" opacity=".9" font-family="serif">♪</text>
+    <text x="42" y="20" font-size="9" fill="#6050a0" opacity=".9" font-family="serif">♫</text>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    <!-- Singing mouth -->
+    <ellipse cx="${cx}" cy="${cy + 4}" rx="5" ry="4" fill="#2a1a3a"/>
+    <ellipse cx="${cx}" cy="${cy + 3}" rx="4" ry="2.5" fill="#c04070"/>
+  `);
+}
+
+/** − — Teary-eyed, sad, periwinkle accent */
+function ghostSUB() {
+  const fill = '#e8ecf8', stroke = '#8898d0';
+  const cx = 30, cy = 36;
+  return svgWrap('sub', `
+    ${ghostBody(cx, cy, 18, 28, fill, stroke)}
+    <!-- Sad eyes -->
+    <ellipse cx="${cx - 7}" cy="${cy - 4}" rx="3" ry="3.5" fill="#2a1a3a"/>
+    <ellipse cx="${cx + 7}" cy="${cy - 4}" rx="3" ry="3.5" fill="#2a1a3a"/>
+    <!-- Worried eyebrows -->
+    <path d="M ${cx - 11} ${cy - 10} Q ${cx - 7} ${cy - 8} ${cx - 3} ${cy - 10}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M ${cx + 3} ${cy - 10} Q ${cx + 7} ${cy - 8} ${cx + 11} ${cy - 10}" fill="none" stroke="#2a1a3a" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Tear drops -->
+    <ellipse cx="${cx - 7}" cy="${cy + 4}" rx="2" ry="3" fill="#a0c0f0" opacity=".8"/>
+    <ellipse cx="${cx + 7}" cy="${cy + 5}" rx="2" ry="3" fill="#a0c0f0" opacity=".8"/>
+    ${cheeks(cx, cy - 2)}
+    ${smileSad(cx, cy + 9)}
+  `);
+}
+
+/** 1 — Tiny crown, proud, yellow accent */
+function ghost1() {
+  const fill = '#f8f8e0', stroke = '#c0b840';
+  const cx = 30, cy = 36;
+  return svgWrap('1', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Crown -->
+    <path d="M 18,25 L 18,16 L 23,21 L 30,13 L 37,21 L 42,16 L 42,25 Z" fill="#f0c030" stroke="#c09020" stroke-width="1"/>
+    <circle cx="30" cy="13" r="2.5" fill="#e04040"/>
+    <circle cx="18" cy="16" r="2" fill="#40a0e0"/>
+    <circle cx="42" cy="16" r="2" fill="#40e090"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 3)}
+  `);
+}
+
+/** 2 — Bunny ears, playful, pink accent */
+function ghost2() {
+  const fill = '#f8e8f4', stroke = '#c880b8';
+  const cx = 30, cy = 36;
+  return svgWrap('2', `
+    <!-- Bunny ears -->
+    <ellipse cx="${cx - 10}" cy="12" rx="5" ry="10" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    <ellipse cx="${cx - 10}" cy="12" rx="2.5" ry="7" fill="#f4b0c8" opacity=".8"/>
+    <ellipse cx="${cx + 10}" cy="12" rx="5" ry="10" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    <ellipse cx="${cx + 10}" cy="12" rx="2.5" ry="7" fill="#f4b0c8" opacity=".8"/>
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 3)}
+    <!-- Tiny nose -->
+    <ellipse cx="${cx}" cy="${cy + 1}" rx="2" ry="1.5" fill="#f090b0"/>
+  `);
+}
+
+/** 3 — Leaf, serene, mint accent */
+function ghost3() {
+  const fill = '#e8f4ec', stroke = '#70b888';
+  const cx = 30, cy = 36;
+  return svgWrap('3', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Leaf accessories -->
+    <ellipse cx="20" cy="20" rx="7" ry="11" fill="#70b060" opacity=".8" transform="rotate(-30,20,20)"/>
+    <line x1="20" y1="12" x2="20" y2="28" stroke="#408040" stroke-width="1" opacity=".8"/>
+    <ellipse cx="40" cy="22" rx="5" ry="9" fill="#90c870" opacity=".7" transform="rotate(20,40,22)"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileHappy(cx, cy + 3)}
+  `);
+}
+
+/** + — Sparkles, bouncy energy, amber accent */
+function ghostADD() {
+  const fill = '#f8f0e4', stroke = '#d09848';
+  const cx = 30, cy = 36;
+  return svgWrap('add', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Sparkles -->
+    <text x="6" y="16" font-size="13" fill="#f0c030" opacity=".95">✦</text>
+    <text x="43" y="20" font-size="9" fill="#f0c030" opacity=".9">✦</text>
+    <text x="12" y="30" font-size="8" fill="#f0a030" opacity=".8">✧</text>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${mouthO(cx, cy + 3)}
+  `);
+}
+
+/** ⌫ — Eraser-shaped head detail, sheepish, gray accent */
+function ghostBS() {
+  const fill = '#f0eeea', stroke = '#a09888';
+  const cx = 30, cy = 36;
+  return svgWrap('bs', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Eraser headband -->
+    <rect x="16" y="${cy - 12}" width="28" height="7" rx="3" fill="#f0e0a0" stroke="#c0b060" stroke-width="1"/>
+    <!-- Sweat drop -->
+    <ellipse cx="44" cy="${cy - 8}" rx="3.5" ry="4.5" fill="#a0c8e8" opacity=".8"/>
+    <path d="M 44 ${cy - 13} Q 46 ${cy - 10} 44 ${cy - 4}" fill="#a0c8e8" opacity=".8"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileSmirk(cx, cy + 3)}
+  `);
+}
+
+/** 0 — Classic round plain, friendly, cool white accent */
+function ghost0() {
+  const fill = '#f4f4f8', stroke = '#b0b0c0';
+  const cx = 30, cy = 36;
+  return svgWrap('0', `
+    <!-- Extra-round plump body -->
+    <ellipse cx="${cx}" cy="${cy + 4}" rx="20" ry="22" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    <!-- Wavy hem overlay -->
+    <path d="
+      M 10 ${cy + 20}
+      Q 16 ${cy + 28} 22 ${cy + 22}
+      Q 30 ${cy + 30} 38 ${cy + 22}
+      Q 44 ${cy + 28} 50 ${cy + 20}
+    " fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+    ${eyes(cx, cy)}
+    ${cheeks(cx, cy + 2)}
+    ${smileHappy(cx, cy + 7)}
+  `);
+}
+
+/** , — Comma mark, quirky, lilac accent */
+function ghostCOM() {
+  const fill = '#f0ecf8', stroke = '#a890c8';
+  const cx = 30, cy = 36;
+  return svgWrap('com', `
+    ${ghostBody(cx, cy, 17, 28, fill, stroke)}
+    <!-- Squiggly antenna -->
+    <path d="M ${cx} ${cy - 14} Q ${cx + 8} ${cy - 20} ${cx + 4} ${cy - 26} Q ${cx} ${cy - 30} ${cx + 6} ${cy - 34}" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="${cx + 6}" cy="${cy - 34}" r="3" fill="#c0a0e0"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${smileSmirk(cx, cy + 3)}
+  `);
+}
+
+/** = — Disco ball detail, dancer, mauve accent */
+function ghostEQ() {
+  const fill = '#f4ecf8', stroke = '#c0a0d0';
+  const cx = 30, cy = 36;
+  return svgWrap('eq', `
+    ${ghostBody(cx, cy, 18, 28, fill, stroke)}
+    <!-- Disco ball above -->
+    <circle cx="${cx}" cy="12" r="8" fill="#c8d8f0" stroke="#a0b8d8" stroke-width="1"/>
+    <!-- Disco grid -->
+    <line x1="${cx - 8}" y1="12" x2="${cx + 8}" y2="12" stroke="#8898b8" stroke-width=".8"/>
+    <line x1="${cx}" y1="4" x2="${cx}" y2="20" stroke="#8898b8" stroke-width=".8"/>
+    <line x1="${cx - 6}" y1="6" x2="${cx + 6}" y2="18" stroke="#8898b8" stroke-width=".8"/>
+    <line x1="${cx + 6}" y1="6" x2="${cx - 6}" y2="18" stroke="#8898b8" stroke-width=".8"/>
+    <!-- Sparkle dots -->
+    <circle cx="${cx - 5}" cy="9" r="1.5" fill="white" opacity=".9"/>
+    <circle cx="${cx + 4}" cy="15" r="1" fill="white" opacity=".8"/>
+    <!-- Stem -->
+    <line x1="${cx}" y1="20" x2="${cx}" y2="${cy - 10}" stroke="#a090b8" stroke-width="1.5"/>
+    <!-- Arms up -->
+    <path d="M 14 ${cy + 2} Q 10 ${cy - 4} 16 ${cy - 8}" fill="none" stroke="${stroke}" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 46 ${cy + 2} Q 50 ${cy - 4} 44 ${cy - 8}" fill="none" stroke="${stroke}" stroke-width="2.5" stroke-linecap="round"/>
+    ${eyes(cx, cy - 4)}
+    ${cheeks(cx, cy - 2)}
+    ${mouthGrin(cx, cy + 4)}
+  `);
+}
+
+// ─── Key → ghost mapping ──────────────────────────────────────────────────────
+
+const GHOST_MAP = {
+  'ac':  ghostAC,
+  'pm':  ghostPM,
+  'pct': ghostPCT,
+  'div': ghostDIV,
+  '7':   ghost7,
+  '8':   ghost8,
+  '9':   ghost9,
+  'mul': ghostMUL,
+  '4':   ghost4,
+  '5':   ghost5,
+  '6':   ghost6,
+  'sub': ghostSUB,
+  '1':   ghost1,
+  '2':   ghost2,
+  '3':   ghost3,
+  'add': ghostADD,
+  'bs':  ghostBS,
+  '0':   ghost0,
+  'com': ghostCOM,
+  'eq':  ghostEQ,
+};
+
+/**
+ * Returns the SVG string for a given ghost key ID.
+ */
+function getGhostSVG(id) {
+  const fn = GHOST_MAP[id];
+  return fn ? fn() : ghost0();
+}
+
+return {ghostAC,ghostPM,ghostPCT,ghostDIV,ghost7,ghost8,ghost9,ghostMUL,ghost4,ghost5,ghost6,ghostSUB,ghost1,ghost2,ghost3,ghostADD,ghostBS,ghost0,ghostCOM,ghostEQ,GHOST_MAP,getGhostSVG};
+})();
+__booModules["animator.js"] = (() => {
+/**
+ * BooCalc — Animator
+ * Handles ghost flight from key → display and all six emotion scenes.
+ * Runs on a pointer-events:none overlay. Respects reduced-motion preference.
+ */
+
+
+const { getGhostSVG } = __booModules["ghosts.js"];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+
+const MAX_SPRITES = 12;
+let _motionEnabled = true;
+let _liveSprites = 0;
+let _overlay = null;
+let _displayEl = null;
+let _lang = 'es';
+const _recentGhosts = [];
+
+// ─── Initialise ───────────────────────────────────────────────────────────────
+
+/**
+ * Call once after DOM ready.
+ * overlay: the pointer-events:none animation layer element
+ * displayEl: the .display-panel element (flight destination)
+ */
+function initAnimator(overlay, displayEl, lang = 'es') {
+  _overlay = overlay;
+  _displayEl = displayEl;
+  _lang = lang;
+
+  // Respect OS preference
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (mq.matches) _motionEnabled = false;
+  mq.addEventListener('change', e => {
+    if (e.matches) _motionEnabled = false;
+  });
+}
+
+function setMotion(enabled) {
+  // If OS says reduce motion, honour it even if user toggles on
+  const osPref = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  _motionEnabled = enabled && !osPref;
+  if (!_motionEnabled && _overlay) {
+    // Clear any live sprites when motion is disabled
+    Array.from(_overlay.querySelectorAll('.ghost-sprite')).forEach(el => removeSprite(el));
+  }
+}
+
+function setLang(lang) {
+  _lang = lang;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function centerOf(el) {
+  const r = el.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
+
+function overlayOffset() {
+  if (!_overlay) return { x: 0, y: 0 };
+  const r = _overlay.getBoundingClientRect();
+  return { x: r.left, y: r.top };
+}
+
+function createSprite(ghostId) {
+  const div = document.createElement('div');
+  div.className = 'ghost-sprite';
+  div.setAttribute('aria-hidden', 'true');
+  div.innerHTML = getGhostSVG(ghostId);
+  _overlay.appendChild(div);
+  _liveSprites++;
+  div.addEventListener('animationend', () => removeSprite(div), { once: true });
+  return div;
+}
+
+function removeSprite(el) {
+  if (el.parentNode) {
+    el.parentNode.removeChild(el);
+    _liveSprites = Math.max(0, _liveSprites - 1);
+  }
+}
+
+function makeRoom(count) {
+  if (!_overlay) return;
+  while (_liveSprites + count > MAX_SPRITES) {
+    const oldest = _overlay.querySelector('.ghost-sprite:not(.ghost-flight)') || _overlay.querySelector('.ghost-sprite');
+    if (!oldest) { _liveSprites = 0; break; }
+    removeSprite(oldest);
+  }
+}
+
+function placeSpriteAt(sprite, x, y) {
+  // x, y relative to overlay
+  sprite.style.left = (x - 30) + 'px'; // ghost is 60px wide
+  sprite.style.top  = (y - 35) + 'px'; // ghost is 70px tall
+}
+
+// ─── Flight animation ─────────────────────────────────────────────────────────
+
+/**
+ * Fly a ghost from keyEl to the display.
+ * @param {Element} keyEl  — the pressed button
+ * @param {string}  ghostId — ghost variant key
+ * @returns {Promise<void>}
+ */
+function flyGhost(keyEl, ghostId) {
+  if (!_recentGhosts.includes(ghostId)) _recentGhosts.push(ghostId);
+  else { _recentGhosts.splice(_recentGhosts.indexOf(ghostId), 1); _recentGhosts.push(ghostId); }
+  if (_recentGhosts.length > 10) _recentGhosts.shift();
+  if (!_motionEnabled || !_overlay || !_displayEl) return Promise.resolve();
+  makeRoom(1);
+
+  const off = overlayOffset();
+  const from = centerOf(keyEl);
+  const displayRect = _displayEl.getBoundingClientRect();
+  const to = {x: displayRect.left + displayRect.width / 2, y: displayRect.top + displayRect.height * .43};
+
+  const startX = from.x - off.x;
+  const startY = from.y - off.y;
+  const endX   = to.x   - off.x;
+  const endY   = to.y   - off.y;
+
+  // Arc midpoint — curve upward
+  const midX = (startX + endX) / 2;
+  const midY = Math.min(startY, endY) - 60;
+
+  const sprite = createSprite(ghostId);
+  sprite.classList.add('ghost-flight');
+  placeSpriteAt(sprite, startX, startY);
+  sprite.style.opacity = '1';
+  sprite.style.transform = 'scale(1)';
+
+  const duration = 760;
+  let startedAt = null;
+
+  return new Promise(resolve => {
+    const tick = now => {
+      if (!sprite.parentNode) { resolve(); return; }
+      if (startedAt === null) startedAt = now;
+      const t = Math.min(1, (now - startedAt) / duration);
+      const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+      // Quadratic bezier
+      const x = (1 - ease) * (1 - ease) * startX + 2 * (1 - ease) * ease * midX + ease * ease * endX;
+      const y = (1 - ease) * (1 - ease) * startY + 2 * (1 - ease) * ease * midY + ease * ease * endY;
+
+      placeSpriteAt(sprite, x, y);
+
+      // Spin during flight
+      const rot = ease * 360;
+      const scale = t < 0.8 ? 1 : 1 - (t - 0.8) / 0.2 * 0.9;
+      sprite.style.transform = `rotate(${rot}deg) scale(${scale})`;
+      sprite.style.opacity = t < 0.8 ? '1' : String(1 - (t - 0.8) / 0.2);
+
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        // Evaporate
+        sprite.style.transition = 'opacity 0.15s, transform 0.15s';
+        sprite.style.opacity = '0';
+        sprite.style.transform = 'scale(0)';
+        setTimeout(() => { removeSprite(sprite); resolve(); }, 160);
+      }
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+// ─── Emotion scenes ───────────────────────────────────────────────────────────
+
+/**
+ * Run an emotion scene in the display area after the base ghost lands.
+ * scene: 'add' | 'sub' | 'mul' | 'div' | 'pct' | 'eq'
+ */
+function playScene(scene, ghostId) {
+  if (!_motionEnabled || !_overlay || !_displayEl) return;
+  Array.from(_overlay.querySelectorAll('.ghost-sprite:not(.ghost-flight)')).forEach(removeSprite);
+  makeRoom(scene === 'sub' ? 8 : scene === 'div' ? 6 : 3);
+
+  switch (scene) {
+    case 'add': sceneAdd(ghostId); break;
+    case 'sub': sceneSub(ghostId); break;
+    case 'mul': sceneMul(ghostId); break;
+    case 'div': sceneDiv(ghostId); break;
+    case 'pct': scenePct(ghostId); break;
+    case 'eq':  sceneEq(ghostId);  break;
+  }
+}
+
+function displayCenter() {
+  const off = overlayOffset();
+  const r = _displayEl.getBoundingClientRect();
+  const c = {x:r.left + r.width / 2,y:r.top + r.height * .43};
+  return { x: c.x - off.x, y: c.y - off.y };
+}
+
+function companion(index, fallback) {
+  const others = _recentGhosts.filter(id => id !== fallback).reverse();
+  return others[index % Math.max(1, others.length)] || ['0', '2', '8', '3'][index % 4];
+}
+
+// Helper: spawn a ghost at a display-relative position with CSS animation class
+function spawnAt(ghostId, x, y, cls, delay = 0) {
+  if (_liveSprites >= MAX_SPRITES) return null;
+  const sprite = createSprite(ghostId);
+  placeSpriteAt(sprite, x, y);
+  sprite.style.animationDelay = delay + 'ms';
+  sprite.classList.add(...cls.split(/\s+/));
+  // Auto-remove after animation
+  setTimeout(() => removeSprite(sprite), delay + 1800);
+  return sprite;
+}
+
+/** + bounce scene: 3 ghosts bounce excitedly in the display */
+function sceneAdd(ghostId) {
+  const c = displayCenter();
+  const r = _displayEl.getBoundingClientRect();
+  const w = r.width;
+  spawnAt(ghostId, c.x - w * 0.25, c.y, 'scene-bounce', 0);
+  spawnAt(companion(0, ghostId), c.x, c.y, 'scene-bounce', 120);
+  spawnAt(companion(1, ghostId), c.x + w * 0.25, c.y, 'scene-bounce', 240);
+}
+
+/** − cry scene: ghosts with tears visible, slight shake */
+function sceneSub(ghostId) {
+  const c = displayCenter();
+  const r = _displayEl.getBoundingClientRect();
+  const w = r.width;
+  spawnAt(ghostId, c.x - w * 0.2, c.y, 'scene-cry', 0);
+  spawnAt(companion(0, ghostId), c.x + w * 0.2, c.y, 'scene-cry', 180);
+  // Tear drops
+  _spawnTears(c.x - w * 0.2, c.y);
+  _spawnTears(c.x + w * 0.2, c.y);
+}
+
+function _spawnTears(gx, gy) {
+  for (let i = 0; i < 3; i++) {
+    if (_liveSprites >= MAX_SPRITES) break;
+    const tear = document.createElement('div');
+    tear.className = 'ghost-sprite tear-drop';
+    tear.setAttribute('aria-hidden', 'true');
+    tear.innerHTML = `<svg viewBox="0 0 10 14" width="10" height="14">
+      <ellipse cx="5" cy="8" rx="4" ry="5" fill="#80b8e8" opacity=".85"/>
+      <path d="M5,2 Q7,5 5,8 Q3,5 5,2Z" fill="#a0d0f4" opacity=".7"/>
+    </svg>`;
+    tear.style.left = (gx - 5 + (i - 1) * 8) + 'px';
+    tear.style.top  = (gy - 10) + 'px';
+    tear.style.animationDelay = (i * 150) + 'ms';
+    _overlay.appendChild(tear);
+    _liveSprites++;
+    setTimeout(() => removeSprite(tear), 1500);
+  }
+}
+
+/** × hug scene: two ghosts move toward each other */
+function sceneMul(ghostId) {
+  const c = displayCenter();
+  const r = _displayEl.getBoundingClientRect();
+  const w = r.width;
+  const left  = spawnAt(ghostId, c.x - w * 0.3, c.y, 'scene-hug-left',  0);
+  const right = spawnAt(companion(0, ghostId), c.x + w * 0.3, c.y, 'scene-hug-right', 0);
+  left?.style.setProperty('--hug-dx', Math.max(20,w * .3 - 18) + 'px');
+  right?.style.setProperty('--hug-dx', Math.max(20,w * .3 - 18) + 'px');
+}
+
+/** ÷ groups: two visible little huddles, three companions in each. */
+function sceneDiv(ghostId) {
+  const c = displayCenter();
+  const r = _displayEl.getBoundingClientRect();
+  const w = Math.min(76, r.width * 0.22);
+  for (let group = 0; group < 2; group++) {
+    for (let member = 0; member < 3; member++) {
+      const x = c.x + (group ? w : -w) + (member - 1) * 19;
+      const y = c.y + (member === 1 ? -15 : 8);
+      const sprite = spawnAt(member === 0 ? ghostId : companion(group * 2 + member - 1, ghostId), x, y, 'scene-group', group * 100 + member * 70);
+      sprite?.style.setProperty('--group-from', (group ? 55 : -55) + 'px');
+    }
+  }
+}
+
+/** % joke: central ghost with speech bubble */
+function scenePct() {
+  if (!_motionEnabled || !_overlay) return;
+  if (_liveSprites >= MAX_SPRITES) return;
+
+  const off = overlayOffset();
+  // Center of viewport
+  const vx = window.innerWidth  / 2 - off.x;
+  const vy = window.innerHeight / 2 - off.y;
+
+  const container = document.createElement('div');
+  container.className = 'ghost-sprite scene-pct-container';
+  container.setAttribute('aria-hidden', 'true');
+
+  const jokeText = _lang === 'es'
+    ? 'Esperabas que hiciera algo?'
+    : 'Were you expecting me to do something?';
+
+  container.innerHTML = `
+    <div class="pct-bubble">${jokeText}</div>
+    ${getGhostSVG('pct')}
+  `;
+  container.style.left = (vx - 107.5) + 'px';
+  container.style.top  = (vy - 90) + 'px';
+  _overlay.appendChild(container);
+  _liveSprites++;
+  setTimeout(() => removeSprite(container), 2800);
+}
+
+/** = dance: 3 ghosts orbit, result flourish handled by ui.js */
+function sceneEq(ghostId) {
+  const c = displayCenter();
+  const r = _displayEl.getBoundingClientRect();
+  const w = r.width;
+
+  // Three ghosts at different orbit starting positions
+  for (let i = 0; i < 3; i++) {
+    const angle = (i / 3) * Math.PI * 2;
+    const rx = Math.cos(angle) * w * 0.28;
+    const ry = Math.sin(angle) * 20;
+    spawnAt(i === 0 ? ghostId : companion(i - 1, ghostId), c.x + rx, c.y + ry, `scene-dance scene-dance-${i}`, i * 100);
+  }
+}
+
+return {initAnimator,setMotion,setLang,flyGhost,playScene};
+})();
+__booModules["ui.js"] = (() => {
+/**
+ * BooCalc — UI Layer
+ * Wires DOM ↔ engine ↔ animator. Keyboard handler. i18n. Controls.
+ */
+
+
+const { createState, inputDigit, inputDecimal, inputOperator, inputEquals, inputPercent, inputNegate, inputBackspace, inputClear, getDisplayValue, buildExprString, OP_ADD, OP_SUB, OP_MUL, OP_DIV } = __booModules["engine.js"];
+
+const { initAnimator, flyGhost, playScene, setMotion, setLang: setAnimLang } = __booModules["animator.js"];
+
+// ─── i18n ─────────────────────────────────────────────────────────────────────
+
+const STRINGS = {
+  es: {
+    brandLine: 'Un fantasma detrás de cada número.',
+    displayCaption: 'Entre números y apariciones',
+    displayLabel: 'Pantalla de la calculadora',
+    resultLabel: 'Resultado actual',
+    keypadLabel: 'Teclado numérico',
+    controlsLabel: 'Controles',
+    helpTitle:    'Cómo funciona BooCalc',
+    helpPct:      'Porciento: operando ÷ 100. 50% = 0,5; nunca contextual.',
+    helpAdd:      '+ Suma: ¡los fantasmas rebotan de emoción!',
+    helpSub:      '− Resta: los fantasmas lloran 😢',
+    helpMul:      '× Multiplicación: los fantasmas se abrazan 🤗',
+    helpDiv:      '÷ División: los fantasmas se agrupan',
+    helpPctScene: '% Porciento: aparece el fantasma preguntón',
+    helpEq:       '= Resultado: ¡los fantasmas bailan! 🎉',
+    helpClose:    'Cerrar',
+    motionLabel:  'Animaciones',
+    soundLabel:   'Sonido',
+    langLabel:    'Idioma',
+    helpBtn:      'Ayuda',
+    srDigit:      d => `dígito ${d}`,
+    srOp:         o => `operador ${o}`,
+    srEquals:     'resultado',
+    srClear:      'limpiar',
+    srBackspace:  'borrar',
+    srDecimal:    'decimal',
+    srNegate:     'cambiar signo',
+    srPercent:    'porciento',
+    errorMsg:     'Error: ÷ entre 0',
+    acLabel:      'Limpiar todo',
+    pmLabel:      'Cambiar signo',
+    pctLabel:     'Porciento',
+    divLabel:     'Dividir',
+    mulLabel:     'Multiplicar',
+    subLabel:     'Restar',
+    addLabel:     'Sumar',
+    bsLabel:      'Borrar último',
+    decLabel:     'Separador decimal',
+    eqLabel:      'Igual',
+    on:           'Activado',
+    off:          'Desactivado',
+  },
+  en: {
+    brandLine: 'A little ghost behind every number.',
+    displayCaption: 'Where numbers come to life',
+    displayLabel: 'Calculator display',
+    resultLabel: 'Current result',
+    keypadLabel: 'Number keypad',
+    controlsLabel: 'Controls',
+    helpTitle:    'How BooCalc works',
+    helpPct:      'Percent: operand ÷ 100. 50% = 0.5; never contextual.',
+    helpAdd:      '+ Add: ghosts bounce excitedly!',
+    helpSub:      '− Subtract: ghosts cry 😢',
+    helpMul:      '× Multiply: ghosts hug 🤗',
+    helpDiv:      '÷ Divide: ghosts arrange in groups',
+    helpPctScene: '% Percent: the inquisitive ghost appears',
+    helpEq:       '= Equals: ghosts dance! 🎉',
+    helpClose:    'Close',
+    motionLabel:  'Animation',
+    soundLabel:   'Sound',
+    langLabel:    'Language',
+    helpBtn:      'Help',
+    srDigit:      d => `digit ${d}`,
+    srOp:         o => `operator ${o}`,
+    srEquals:     'result',
+    srClear:      'clear',
+    srBackspace:  'backspace',
+    srDecimal:    'decimal',
+    srNegate:     'toggle sign',
+    srPercent:    'percent',
+    errorMsg:     'Error: ÷ by 0',
+    acLabel:      'Clear all',
+    pmLabel:      'Toggle sign',
+    pctLabel:     'Percent',
+    divLabel:     'Divide',
+    mulLabel:     'Multiply',
+    subLabel:     'Subtract',
+    addLabel:     'Add',
+    bsLabel:      'Backspace',
+    decLabel:     'Decimal point',
+    eqLabel:      'Equals',
+    on:           'On',
+    off:          'Off',
+  },
+};
+
+let _lang = 'es';
+function t(key) { return STRINGS[_lang][key] || STRINGS.en[key] || key; }
+
+// ─── App state ────────────────────────────────────────────────────────────────
+
+let _calcState = createState();
+let _motionOn  = true;
+let _sceneVersion = 0;
+
+// ─── DOM refs ─────────────────────────────────────────────────────────────────
+
+let _displayValue, _displayExpr, _srAnnounce;
+let _overlay, _displayPanel;
+
+// ─── Keyboard map ────────────────────────────────────────────────────────────
+
+const KEYBOARD_MAP = {
+  '0':'0','1':'1','2':'2','3':'3','4':'4',
+  '5':'5','6':'6','7':'7','8':'8','9':'9',
+  '.': 'com', ',': 'com',
+  '+': 'add', '-': 'sub', '*': 'mul', '/': 'div',
+  'Enter': 'eq', '=': 'eq',
+  'Backspace': 'bs',
+  'Escape': 'ac',
+  '%': 'pct',
+};
+
+// ─── Dispatch a calculator action ────────────────────────────────────────────
+
+function dispatch(action, ghostId, keyEl) {
+  const prev = _calcState;
+  _calcState = action(_calcState);
+  updateDisplay();
+
+  // Animate
+  if (keyEl) {
+    flyGhost(keyEl, ghostId).then(() => {
+      // After ghost lands, play operator scene if applicable
+    });
+  }
+}
+
+// ─── Key press handler ───────────────────────────────────────────────────────
+
+function handleKey(keyId, keyEl) {
+  if (keyEl) {
+    keyEl.classList.add('pressed');
+    setTimeout(() => keyEl.classList.remove('pressed'), 110);
+  }
+  const ghostId = keyEl ? keyEl.dataset.ghost : keyId;
+
+  // Helper for operator press + scene
+  function doOp(op, scene) {
+    const version = ++_sceneVersion;
+    const prev = _calcState;
+    _calcState = inputOperator(_calcState, op);
+    updateDisplay();
+    if (keyEl) {
+      flyGhost(keyEl, ghostId).then(() => { if (version === _sceneVersion) playScene(scene, ghostId); });
+    } else {
+      playScene(scene, ghostId);
+    }
+  }
+
+  switch (keyId) {
+    case 'ac':
+      _sceneVersion++;
+      _calcState = inputClear(_calcState);
+      updateDisplay();
+      if (keyEl) flyGhost(keyEl, ghostId);
+      break;
+    case 'pm':
+      _calcState = inputNegate(_calcState);
+      updateDisplay();
+      if (keyEl) flyGhost(keyEl, ghostId);
+      break;
+    case 'pct': {
+      const version = ++_sceneVersion;
+      _calcState = inputPercent(_calcState);
+      updateDisplay();
+      if (keyEl) {
+        flyGhost(keyEl, ghostId).then(() => { if (version === _sceneVersion) playScene('pct', ghostId); });
+      } else {
+        playScene('pct', ghostId);
+      }
+      break;
+    }
+    case 'div': doOp(OP_DIV, 'div'); break;
+    case 'mul': doOp(OP_MUL, 'mul'); break;
+    case 'sub': doOp(OP_SUB, 'sub'); break;
+    case 'add': doOp(OP_ADD, 'add'); break;
+    case 'bs':
+      _calcState = inputBackspace(_calcState);
+      updateDisplay();
+      if (keyEl) flyGhost(keyEl, ghostId);
+      break;
+    case 'com-dec':
+      _calcState = inputDecimal(_calcState);
+      updateDisplay();
+      if (keyEl) flyGhost(keyEl, ghostId);
+      break;
+    case 'com':
+      _calcState = inputDecimal(_calcState);
+      updateDisplay();
+      if (keyEl) flyGhost(keyEl, ghostId);
+      break;
+    case 'eq': {
+      const version = ++_sceneVersion;
+      _calcState = inputEquals(_calcState);
+      updateDisplay();
+      const eqEl = document.querySelector('[data-key="eq"]');
+      const eqGhost = eqEl ? eqEl.dataset.ghost : 'eq';
+      const srcEl = keyEl || eqEl;
+      if (srcEl) {
+        flyGhost(srcEl, eqGhost).then(() => { if (version === _sceneVersion) playScene('eq', eqGhost); });
+      } else {
+        playScene('eq', eqGhost);
+      }
+      triggerResultFlourish();
+      break;
+    }
+    default:
+      // Digit
+      if (/^[0-9]$/.test(keyId)) {
+        _calcState = inputDigit(_calcState, keyId);
+        updateDisplay();
+        if (keyEl) flyGhost(keyEl, ghostId);
+      }
+  }
+}
+
+// ─── Display ─────────────────────────────────────────────────────────────────
+
+function updateDisplay() {
+  const val  = getDisplayValue(_calcState, _lang);
+  const expr = buildExprString(_calcState, _lang);
+
+  _displayValue.textContent = val;
+  _displayExpr.textContent  = expr;
+
+  // Auto-shrink long numbers
+  const len = val.length;
+  _displayValue.style.fontSize =
+    len > 14 ? '1.4rem' :
+    len > 10 ? '1.8rem' :
+    len > 7  ? '2.2rem' : '';
+
+  // Screen reader
+  const srText = _calcState.error ? val : (expr ? expr + ' ' + val : val);
+  _srAnnounce.textContent = '';
+  setTimeout(() => { _srAnnounce.textContent = srText; }, 50);
+}
+
+function triggerResultFlourish() {
+  if (!_calcState.justResult) return;
+  _displayValue.classList.remove('result-flourish');
+  void _displayValue.offsetWidth; // reflow
+  _displayValue.classList.add('result-flourish');
+}
+
+// ─── Keyboard ────────────────────────────────────────────────────────────────
+
+function onKeyDown(e) {
+  if (document.getElementById('help-popover')) return;
+  if (e.target.closest?.('#controls') && (e.key === ' ' || e.key === 'Enter')) return;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+  const mapped = KEYBOARD_MAP[e.key];
+  if (!mapped) return;
+
+  e.preventDefault();
+
+  // Find matching DOM key for ghost origin
+  const keyEl = document.querySelector(`[data-key="${mapped}"]`)
+              || document.querySelector(`[data-key="${e.key}"]`);
+
+  handleKey(mapped, keyEl);
+}
+
+// ─── Build keypad ─────────────────────────────────────────────────────────────
+
+const KEY_DEFS = [
+  // row 1
+  { id:'ac',  label:'AC',  ghost:'ac',  cls:'key--special key--clear',    dataKey:'ac'  },
+  { id:'pm',  label:'±',   ghost:'pm',  cls:'key--special',               dataKey:'pm'  },
+  { id:'pct', label:'%',   ghost:'pct', cls:'key--op',                    dataKey:'pct' },
+  { id:'div', label:'÷',   ghost:'div', cls:'key--op key--op-primary',    dataKey:'div' },
+  // row 2
+  { id:'7',   label:'7',   ghost:'7',   cls:'key--tombstone',             dataKey:'7'   },
+  { id:'8',   label:'8',   ghost:'8',   cls:'key--tombstone',             dataKey:'8'   },
+  { id:'9',   label:'9',   ghost:'9',   cls:'key--tombstone',             dataKey:'9'   },
+  { id:'mul', label:'×',   ghost:'mul', cls:'key--op key--op-primary',    dataKey:'mul' },
+  // row 3
+  { id:'4',   label:'4',   ghost:'4',   cls:'key--tombstone',             dataKey:'4'   },
+  { id:'5',   label:'5',   ghost:'5',   cls:'key--tombstone',             dataKey:'5'   },
+  { id:'6',   label:'6',   ghost:'6',   cls:'key--tombstone',             dataKey:'6'   },
+  { id:'sub', label:'−',   ghost:'sub', cls:'key--op key--op-primary',    dataKey:'sub' },
+  // row 4
+  { id:'1',   label:'1',   ghost:'1',   cls:'key--tombstone',             dataKey:'1'   },
+  { id:'2',   label:'2',   ghost:'2',   cls:'key--tombstone',             dataKey:'2'   },
+  { id:'3',   label:'3',   ghost:'3',   cls:'key--tombstone',             dataKey:'3'   },
+  { id:'add', label:'+',   ghost:'add', cls:'key--op key--op-primary',    dataKey:'add' },
+  // row 5
+  { id:'bs',  label:'⌫',   ghost:'bs',  cls:'key--special',               dataKey:'bs'  },
+  { id:'0',   label:'0',   ghost:'0',   cls:'key--tombstone',             dataKey:'0'   },
+  { id:'com', label:',',   ghost:'com', cls:'key--tombstone',             dataKey:'com' },
+  { id:'eq',  label:'=',   ghost:'eq',  cls:'key--op key--op-eq',         dataKey:'eq'  },
+];
+
+function getAriaLabel(def) {
+  const labels = {
+    ac:  () => t('acLabel'),
+    pm:  () => t('pmLabel'),
+    pct: () => t('pctLabel'),
+    div: () => t('divLabel'),
+    mul: () => t('mulLabel'),
+    sub: () => t('subLabel'),
+    add: () => t('addLabel'),
+    bs:  () => t('bsLabel'),
+    com: () => t('decLabel'),
+    eq:  () => t('eqLabel'),
+  };
+  return labels[def.id] ? labels[def.id]() : def.label;
+}
+
+function buildKeypad(container) {
+  container.innerHTML = '';
+  KEY_DEFS.forEach(def => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'key ' + def.cls;
+    btn.dataset.key   = def.dataKey;
+    btn.dataset.ghost = def.ghost;
+    btn.setAttribute('aria-label', getAriaLabel(def));
+
+    if (def.cls.includes('key--tombstone')) {
+      btn.innerHTML = `<span class="key-label" aria-hidden="true">${def.label}</span>`;
+    } else {
+      btn.textContent = def.label;
+    }
+
+    btn.addEventListener('click', () => handleKey(def.id, btn));
+    // Touch: prevent double-fire on mobile
+    btn.addEventListener('touchend', e => { e.preventDefault(); handleKey(def.id, btn); });
+
+    container.appendChild(btn);
+  });
+}
+
+// ─── Controls ─────────────────────────────────────────────────────────────────
+
+function buildControls(container) {
+  container.innerHTML = `
+    <div class="controls-row">
+      <label class="ctrl-toggle">
+        <span class="ctrl-label" data-i18n="motionLabel">${t('motionLabel')}</span>
+        <button class="toggle-btn" id="ctrl-motion" aria-label="${t('motionLabel')}" aria-pressed="true" type="button">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text" data-i18n-on="on" data-i18n-off="off">${t('on')}</span>
+        </button>
+      </label>
+      <label class="ctrl-toggle">
+        <span class="ctrl-label" data-i18n="langLabel">${t('langLabel')}</span>
+        <button class="toggle-btn" id="ctrl-lang" aria-label="${t('langLabel')}" aria-pressed="${_lang === 'en'}" type="button">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text" id="ctrl-lang-text">${_lang.toUpperCase()}</span>
+        </button>
+      </label>
+      <button class="help-btn" id="ctrl-help" type="button">${t('helpBtn')} 👻</button>
+    </div>
+  `;
+
+  document.getElementById('ctrl-motion').addEventListener('click', function() {
+    _motionOn = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !_motionOn;
+    setMotion(_motionOn);
+    this.setAttribute('aria-pressed', String(_motionOn));
+    this.querySelector('.toggle-text').textContent = _motionOn ? t('on') : t('off');
+    this.closest('.ctrl-toggle').classList.toggle('toggle-off', !_motionOn);
+  });
+
+
+  document.getElementById('ctrl-lang').addEventListener('click', function() {
+    _lang = _lang === 'es' ? 'en' : 'es';
+    setAnimLang(_lang);
+    try { localStorage.setItem('booCalcLang', _lang); } catch(e) {}
+    this.setAttribute('aria-pressed', String(_lang === 'en'));
+    document.getElementById('ctrl-lang-text').textContent = _lang.toUpperCase();
+    refreshI18n();
+  });
+
+  document.getElementById('ctrl-help').addEventListener('click', showHelp);
+}
+
+function refreshI18n() {
+  document.documentElement.lang = _lang;
+  _displayPanel.dataset.caption = t('displayCaption');
+  _displayPanel.setAttribute('aria-label', t('displayLabel'));
+  _displayValue.setAttribute('aria-label', t('resultLabel'));
+  document.getElementById('keypad').setAttribute('aria-label', t('keypadLabel'));
+  document.getElementById('controls').setAttribute('aria-label', t('controlsLabel'));
+  updateDisplay();
+  // Update all aria-labels on keys
+  document.querySelectorAll('.key').forEach(btn => {
+    const id = btn.dataset.key;
+    const def = KEY_DEFS.find(d => d.dataKey === id);
+    if (def) btn.setAttribute('aria-label', getAriaLabel(def));
+  });
+  // Update control labels
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.getElementById('ctrl-help').textContent = t('helpBtn') + ' 👻';
+  document.getElementById('ctrl-motion').setAttribute('aria-label', t('motionLabel'));
+  document.getElementById('ctrl-lang').setAttribute('aria-label', t('langLabel'));
+  document.getElementById('ctrl-motion').querySelector('.toggle-text').textContent = _motionOn ? t('on') : t('off');
+  document.querySelector('[data-key="com"] .key-label').textContent = _lang === 'es' ? ',' : '.';
+}
+
+// ─── Help popover ─────────────────────────────────────────────────────────────
+
+function showHelp() {
+  const existing = document.getElementById('help-popover');
+  if (existing) { existing.remove(); return; }
+
+  const pop = document.createElement('div');
+  pop.id = 'help-popover';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-modal', 'true');
+  pop.setAttribute('aria-labelledby', 'help-title');
+  pop.innerHTML = `
+    <div class="help-content">
+      <h2 id="help-title">${t('helpTitle')}</h2>
+      <ul>
+        <li>📐 ${t('helpPct')}</li>
+        <li>🎉 ${t('helpAdd')}</li>
+        <li>😢 ${t('helpSub')}</li>
+        <li>🤗 ${t('helpMul')}</li>
+        <li>👥 ${t('helpDiv')}</li>
+        <li>👻 ${t('helpPctScene')}</li>
+        <li>💃 ${t('helpEq')}</li>
+      </ul>
+      <button class="help-close" type="button">${t('helpClose')}</button>
+    </div>
+  `;
+  document.body.appendChild(pop);
+  const closeHelp = () => {
+    pop.remove();
+    document.getElementById('ctrl-help').focus();
+  };
+  pop.querySelector('.help-close').addEventListener('click', closeHelp);
+  pop.addEventListener('click', e => { if (e.target === pop) closeHelp(); });
+
+  // Focus trap
+  const closeBtn = pop.querySelector('.help-close');
+  closeBtn.focus();
+  pop.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeHelp(); }
+    if (e.key === 'Tab') { e.preventDefault(); closeBtn.focus(); }
+  });
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+
+function init() {
+  // Restore language
+  try {
+    const saved = localStorage.getItem('booCalcLang');
+    if (saved === 'en' || saved === 'es') _lang = saved;
+  } catch(e) {}
+
+  // DOM elements
+  _displayValue = document.getElementById('display-value');
+  _displayExpr  = document.getElementById('display-expr');
+  _srAnnounce   = document.getElementById('sr-announce');
+  _overlay      = document.getElementById('ghost-overlay');
+  _displayPanel = document.getElementById('display-panel');
+
+  // Build UI
+  buildKeypad(document.getElementById('keypad'));
+  buildControls(document.getElementById('controls'));
+
+  // Init animator
+  initAnimator(_overlay, _displayPanel, _lang);
+  setMotion(_motionOn);
+
+  // Keyboard
+  document.addEventListener('keydown', onKeyDown);
+
+  // Initial display
+  refreshI18n();
+
+  // Check prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    _motionOn = false;
+    setMotion(false);
+    const btn = document.getElementById('ctrl-motion');
+    if (btn) {
+      btn.setAttribute('aria-pressed', 'false');
+      btn.querySelector('.toggle-text').textContent = t('off');
+      btn.closest('.ctrl-toggle').classList.add('toggle-off');
+    }
+  }
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', event => {
+    if (!event.matches) return;
+    _motionOn = false;
+    setMotion(false);
+    const btn = document.getElementById('ctrl-motion');
+    btn.setAttribute('aria-pressed', 'false');
+    btn.querySelector('.toggle-text').textContent = t('off');
+    btn.closest('.ctrl-toggle').classList.add('toggle-off');
+  });
+}
+
+return {init};
+})();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', __booModules['ui.js'].init, {once: true});
+} else {
+  __booModules['ui.js'].init();
+}
+
+</script>
+
+</body>
+</html>
