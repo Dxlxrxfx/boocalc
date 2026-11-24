@@ -21,7 +21,7 @@ would respond to what the person was doing.
 ## What it does
 BooCalc performs real arithmetic with standard operator precedence. It supports
 decimal input, negative numbers, percentages, chained operations and keyboard
-input. Each of its twenty keys summons a distinct original SVG ghost that travels
+input. Each of its twenty keys summons a distinct illustrated ghost that travels
 from that key into the operation display and evaporates.
 
 Addition makes the cast bounce excitedly. Subtraction brings little tears.
@@ -37,12 +37,14 @@ preference. Results remain readable, and the app can run offline as one HTML fil
 The product concept and six reactions are my creative direction. I used Kiro CLI
 and ChatGPT to develop the application. Kiro generated the requirements, design,
 task list and product steering in `.kiro`, then the initial calculator engine,
-twenty SVG characters, animation system, UI, styles, build script and test suite.
+the initial twenty SVG characters, animation system, UI, styles, build script and test suite.
 
 ChatGPT prepared the brief from my direction, reviewed and refined the generated
 code, corrected state transitions and packaging, and ran arithmetic and browser
-checks. The result uses HTML, CSS and JavaScript without third-party assets,
-external fonts, dependencies or paid APIs. The public development log identifies
+checks. The result uses HTML, CSS and JavaScript with a BooCalc-specific AI-generated sprite atlas,
+external fonts, dependencies or paid APIs. The current illustrated buttons and ghosts were generated with OpenAI image
+generation from my direction, then integrated by ChatGPT. Kiro authored the
+initial SVG character system before that visual replacement. The public development log identifies
 which work came from each tool.
 
 ## How Kiro was used
@@ -70,12 +72,12 @@ bounded during fast input, finish their scenes and disappear cleanly. Stale
 callbacks had to be prevented from replacing a more recent operator's reaction.
 
 ## Accomplishments
-- Twenty distinct, original SVG characters with consistent key identities.
+- Twenty distinct illustrated characters with consistent key identities.
 - Six working reaction scenes tied to real calculator inputs.
 - A self-contained application with no external runtime dependencies.
 - Fifty-one passing arithmetic and regression tests.
 - Keyboard support, ES/EN copy and optional motion.
-- Verified desktop use and a 390 × 844 browser iframe layout.
+- Verified desktop use and 390 × 844 / 375 × 667 browser iframe layouts.
 
 ## What is next
 Physical-device and assistive-technology testing, followed by refinements based

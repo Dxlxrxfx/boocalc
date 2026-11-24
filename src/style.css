@@ -859,3 +859,48 @@ body {
 
 /* Readable control labels at all viewport sizes. */
 .ctrl-label{font-size:.875rem}.toggle-text{font-size:.8125rem}
+
+/* Illustrated assets from the user-approved BooCalc sprite sheet. */
+:root { --boocalc-atlas: url("assets/boocalc-sprites.webp"); }
+.atlas-tile {
+  display:block;
+  flex-shrink:0;
+  background-image:var(--boocalc-atlas);
+  background-repeat:no-repeat;
+  background-size:800% 500%;
+  background-position:var(--atlas-x) var(--atlas-y);
+  pointer-events:none;
+}
+.atlas-tile--ghost {clip-path:inset(3% 1% 1% 1%)}
+.key {
+  height:84px;
+  padding:0;
+  border:0;
+  border-radius:14px;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+  filter:drop-shadow(0 4px 3px #0d191f66);
+}
+.key::before,.key::after {display:none}
+.key .atlas-tile {height:100%;aspect-ratio:1;max-width:100%}
+.key .key-label {display:none}
+.key:hover {
+  background:transparent;
+  box-shadow:none;
+  filter:brightness(1.12) drop-shadow(0 4px 5px #0d191f88);
+}
+.key:active,.key.pressed {filter:brightness(1.18) drop-shadow(0 2px 2px #0d191f66)}
+.key--op-eq .atlas-tile {filter:drop-shadow(0 0 4px #cedcaf66)}
+.ghost-sprite:not(.tear-drop):not(.scene-pct-container) {width:72px;height:72px}
+.ghost-sprite>.atlas-tile {width:72px;height:72px;filter:drop-shadow(0 3px 5px #11192366)}
+.scene-pct-container>.atlas-tile {width:112px;height:112px}
+.brand-ghost .atlas-tile {width:100%;height:100%}
+@media(max-width:600px) {
+  .key {height:70px}
+  #keypad {gap:7px 8px}
+}
+@media(max-height:740px) {
+  .key {height:54px}
+  #keypad {gap:7px 8px}
+}

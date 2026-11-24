@@ -13,6 +13,7 @@ import {
 } from './engine.js';
 
 import { initAnimator, flyGhost, playScene, setMotion, setLang as setAnimLang } from './animator.js';
+import { getButtonMarkup, getGhostMarkup } from './ghosts.js';
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
 
@@ -96,7 +97,7 @@ const STRINGS = {
     subLabel:     'Subtract',
     addLabel:     'Add',
     bsLabel:      'Backspace',
-    decLabel:     'Decimal point',
+    decLabel:     'Decimal separator',
     eqLabel:      'Equals',
     on:           'On',
     off:          'Off',
@@ -339,11 +340,7 @@ function buildKeypad(container) {
     btn.dataset.ghost = def.ghost;
     btn.setAttribute('aria-label', getAriaLabel(def));
 
-    if (def.cls.includes('key--tombstone')) {
-      btn.innerHTML = `<span class="key-label" aria-hidden="true">${def.label}</span>`;
-    } else {
-      btn.textContent = def.label;
-    }
+    btn.innerHTML = `${getButtonMarkup(def.id)}<span class="key-label" aria-hidden="true">${def.label}</span>`;
 
     btn.addEventListener('click', () => handleKey(def.id, btn));
     // Touch: prevent double-fire on mobile
@@ -484,6 +481,7 @@ export function init() {
   // Build UI
   buildKeypad(document.getElementById('keypad'));
   buildControls(document.getElementById('controls'));
+  document.querySelector('.brand-ghost').innerHTML = getGhostMarkup('2');
 
   // Init animator
   initAnimator(_overlay, _displayPanel, _lang);

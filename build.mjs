@@ -18,7 +18,10 @@ const dist  = p => join(__dir, 'dist', p);
 // ─── Read source files ────────────────────────────────────────────────────────
 
 const html    = readFileSync(src('index.html'),    'utf8');
-const css     = readFileSync(src('style.css'),     'utf8');
+const atlas   = readFileSync(src('assets/boocalc-sprites.webp'));
+const atlasUrl = `data:image/webp;base64,${atlas.toString('base64')}`;
+const css     = readFileSync(src('style.css'), 'utf8')
+  .replace('url("assets/boocalc-sprites.webp")', `url("${atlasUrl}")`);
 const engine  = readFileSync(src('engine.js'),     'utf8');
 const ghosts  = readFileSync(src('ghosts.js'),     'utf8');
 const animator = readFileSync(src('animator.js'),  'utf8');

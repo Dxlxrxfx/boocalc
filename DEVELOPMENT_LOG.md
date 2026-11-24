@@ -145,3 +145,29 @@ Kiro did not execute shell tests or browser QA. These checks were run by
 ChatGPT. Physical-device touch behavior and real assistive-technology testing
 remain unverified. This is a contest prototype; contest registration, public
 GitHub publication and the YouTube demonstration have not been completed.
+
+
+## Illustrated assets — 24 November 2026
+
+At the user's request, OpenAI image generation created a transparent BooCalc
+sprite sheet containing twenty engraved tombstone buttons and twenty matching
+kawaii ghost frames. This artwork was generated after the Kiro implementation.
+ChatGPT encoded the intact image as WebP, replaced the original character
+rendering and button surfaces with atlas frames, and retained the arithmetic
+engine, keyboard and six scene behaviors. The header ghost uses the same art.
+The standalone build embeds the atlas so the public test build remains offline.
+
+The original Kiro SVG implementation described above is historical provenance;
+the current characters use the generated raster atlas. The decimal stone is
+engraved with a comma in either language; both keyboard separators still work.
+
+Integration checks actually executed:
+
+- Existing arithmetic/regression suite: 51 passed, 0 failed.
+- Standalone build syntax check passed with the complete atlas embedded.
+- Browser: all twenty stone frames rendered; addition, subtraction, hugging,
+  grouping, percent joke and three dancing raster ghosts were observed.
+- 6 ÷ 3 displayed 2; with motion disabled, 8 ÷ 2 displayed 4 and no sprites remained.
+- ES/EN switching retained the illustrated keys and updated accessible names.
+- All twenty keys and controls fit 390 × 844 and 375 × 667 iframe viewports
+  without horizontal overflow. Physical touch devices remain untested.

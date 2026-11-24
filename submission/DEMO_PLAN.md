@@ -14,7 +14,7 @@ no third-party music. The generated demo must show the current working app.
 | Percent | Enter 50 % and show the central joke | Percent really calculates 0.5 — with a little attitude. |
 | Equals | Enter 2 + 3 = and hold the dance | Every result deserves a dance. |
 | Math and controls | Show 2 + 3 × 4 = 14; switch motion off and back on | Standard precedence. Optional motion. Keyboard input. |
-| Close | Show the app and the source link | Built with Kiro CLI. 51 passing tests. Original SVG art. |
+| Close | Show the app and the source link | Built with Kiro CLI. 51 passing tests. Illustrated sprite atlas. |
 
 Use the exact English joke shown by the live app: “Were you expecting me to do
 something?” The Spanish version remains “Esperabas que hiciera algo?”.

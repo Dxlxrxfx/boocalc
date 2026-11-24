@@ -6,11 +6,12 @@
 
 'use strict';
 
-import { getGhostSVG } from './ghosts.js';
+import { getGhostMarkup } from './ghosts.js';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
 const MAX_SPRITES = 12;
+const GHOST_SIZE = 72;
 let _motionEnabled = true;
 let _liveSprites = 0;
 let _overlay = null;
@@ -69,7 +70,7 @@ function createSprite(ghostId) {
   const div = document.createElement('div');
   div.className = 'ghost-sprite';
   div.setAttribute('aria-hidden', 'true');
-  div.innerHTML = getGhostSVG(ghostId);
+  div.innerHTML = getGhostMarkup(ghostId);
   _overlay.appendChild(div);
   _liveSprites++;
   div.addEventListener('animationend', () => removeSprite(div), { once: true });
@@ -94,8 +95,8 @@ function makeRoom(count) {
 
 function placeSpriteAt(sprite, x, y) {
   // x, y relative to overlay
-  sprite.style.left = (x - 30) + 'px'; // ghost is 60px wide
-  sprite.style.top  = (y - 35) + 'px'; // ghost is 70px tall
+  sprite.style.left = (x - GHOST_SIZE / 2) + 'px';
+  sprite.style.top  = (y - GHOST_SIZE / 2) + 'px';
 }
 
 // ─── Flight animation ─────────────────────────────────────────────────────────
@@ -301,7 +302,7 @@ function scenePct() {
 
   container.innerHTML = `
     <div class="pct-bubble">${jokeText}</div>
-    ${getGhostSVG('pct')}
+    ${getGhostMarkup('pct')}
   `;
   container.style.left = (vx - 107.5) + 'px';
   container.style.top  = (vy - 90) + 'px';
