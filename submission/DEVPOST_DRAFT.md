@@ -83,8 +83,11 @@ on feedback about character visibility and reaction timing.
 
 ## Links to complete before submission
 - Source: https://github.com/Dxlxrxfx/boocalc
-- Hosted app: https://boo-calculadora-fantasmas.rxfxdxlx.chatgpt.site
+- Functional test build: https://github.com/Dxlxrxfx/boocalc/raw/refs/heads/main/dist/index.html
+- Instructions: download the HTML file and open it in a modern browser; no account, server or internet connection is required.
+- Hosted owner preview: https://boo-calculadora-fantasmas.rxfxdxlx.chatgpt.site
 - Public YouTube demo: pending upload and verification.
 
-The hosted app is currently owner-only. Judge access must be arranged before
-submission. Registration and final acceptance of the contest rules are pending.
+The test build is publicly downloadable for judge access. The hosted owner preview
+has separate access controls. Registration, video publication and final acceptance
+of the contest rules are pending.

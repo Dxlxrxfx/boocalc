@@ -15,7 +15,7 @@ The standalone build below works locally without an account or internet access.
 
 ## Try it
 
-Download this repository and open **`dist/index.html`** in a modern browser.
+[Download the standalone calculator](https://github.com/Dxlxrxfx/boocalc/raw/refs/heads/main/dist/index.html) and open it in a modern browser. Alternatively, download this repository and open **`dist/index.html`**.
 It contains the application, styles and original SVG illustrations in one file.
 There are no external packages, fonts, services or API keys.
 
