@@ -171,3 +171,30 @@ Integration checks actually executed:
 - ES/EN switching retained the illustrated keys and updated accessible names.
 - All twenty keys and controls fit 390 × 844 and 375 × 667 iframe viewports
   without horizontal overflow. Physical touch devices remain untested.
+
+
+## Slower motion and key sounds — 24 November 2026
+
+At the user's request, ChatGPT changed the key-to-display flight from 760 ms
+to 1200 ms, replaced the full spin with a gentle sway, and slowed the reaction
+scenes. Scene cleanup now accommodates their longer duration.
+
+`src/sound.js` synthesizes a short, quiet “booo” from harmonics and breath noise.
+It starts from the common calculator input handler, covering clicks, touch and
+keyboard input. Sound is independent of motion and has a persisted mute control
+in Spanish and English. Playback uses a cached buffer and at most two active
+voices, with short fades on rapid replacement. No microphone, audio downloads,
+recordings or third-party sound service are involved.
+
+The standalone build now includes the sound module. The arithmetic suite still
+passes all 51 tests. Waveform checks verified finite samples, a zero-ended
+0.58-second envelope and a low playback peak of approximately 0.0704 full scale.
+Browser checks observed the 1.9-second bounce and 2.3-second dance, 2+3=5,
+and mute persistence across reload plus the English Sound label.
+
+Additional browser checks: keyboard 1,5+2= displayed 3,5; rapid digit clicks
+displayed 1234567890 without application console errors. With motion off,
+8÷2= displayed 4, the sprite layer was empty, and sound remained enabled.
+The additional Sound control fits both 390×844 and 375×667 iframe layouts.
+Audio waveform/gain were checked programmatically; subjective playback on a
+physical device has not been assessed.

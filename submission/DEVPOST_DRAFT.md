@@ -29,7 +29,8 @@ Multiplication makes the ghosts hug. Division gathers them into small groups.
 Equals makes them dance while the result appears. Percent performs its calculation
 and summons a central character asking, “Were you expecting me to do something?”
 
-The UI has Spanish and English modes and an animation toggle. Decorative motion
+The UI has Spanish and English modes, an animation toggle and an independent
+sound toggle. Each key plays a quiet synthesized “booo”; muting it is remembered. Decorative motion
 is separated from arithmetic and honors the operating system's reduced-motion
 preference. Results remain readable, and the app can run offline as one HTML file.
 

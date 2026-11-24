@@ -860,6 +860,14 @@ body {
 /* Readable control labels at all viewport sizes. */
 .ctrl-label{font-size:.875rem}.toggle-text{font-size:.8125rem}
 
+/* A more leisurely pace for the little ghosts. */
+.scene-bounce {animation-duration:1.9s;animation-iteration-count:1}
+.scene-cry {animation-duration:.7s}
+.scene-hug-left,.scene-hug-right {animation-duration:1.8s}
+.scene-group,.scene-dance-0,.scene-dance-1,.scene-dance-2 {animation-duration:2.3s}
+.tear-drop {animation-duration:1.2s}
+.scene-pct-container {animation-duration:3.6s}
+
 /* Illustrated assets from the user-approved BooCalc sprite sheet. */
 :root { --boocalc-atlas: url("assets/boocalc-sprites.webp"); }
 .atlas-tile {

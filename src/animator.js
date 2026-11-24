@@ -134,7 +134,7 @@ export function flyGhost(keyEl, ghostId) {
   sprite.style.opacity = '1';
   sprite.style.transform = 'scale(1)';
 
-  const duration = 760;
+  const duration = 1200;
   let startedAt = null;
 
   return new Promise(resolve => {
@@ -150,8 +150,8 @@ export function flyGhost(keyEl, ghostId) {
 
       placeSpriteAt(sprite, x, y);
 
-      // Spin during flight
-      const rot = ease * 360;
+      // Gentle sway makes the character readable during the slower flight.
+      const rot = Math.sin(ease * Math.PI * 2) * 12;
       const scale = t < 0.8 ? 1 : 1 - (t - 0.8) / 0.2 * 0.9;
       sprite.style.transform = `rotate(${rot}deg) scale(${scale})`;
       sprite.style.opacity = t < 0.8 ? '1' : String(1 - (t - 0.8) / 0.2);
@@ -160,10 +160,10 @@ export function flyGhost(keyEl, ghostId) {
         requestAnimationFrame(tick);
       } else {
         // Evaporate
-        sprite.style.transition = 'opacity 0.15s, transform 0.15s';
+        sprite.style.transition = 'opacity 0.24s, transform 0.24s';
         sprite.style.opacity = '0';
         sprite.style.transform = 'scale(0)';
-        setTimeout(() => { removeSprite(sprite); resolve(); }, 160);
+        setTimeout(() => { removeSprite(sprite); resolve(); }, 240);
       }
     };
     requestAnimationFrame(tick);
@@ -211,7 +211,7 @@ function spawnAt(ghostId, x, y, cls, delay = 0) {
   sprite.style.animationDelay = delay + 'ms';
   sprite.classList.add(...cls.split(/\s+/));
   // Auto-remove after animation
-  setTimeout(() => removeSprite(sprite), delay + 1800);
+  setTimeout(() => removeSprite(sprite), delay + 3000);
   return sprite;
 }
 
@@ -252,7 +252,7 @@ function _spawnTears(gx, gy) {
     tear.style.animationDelay = (i * 150) + 'ms';
     _overlay.appendChild(tear);
     _liveSprites++;
-    setTimeout(() => removeSprite(tear), 1500);
+    setTimeout(() => removeSprite(tear), 1900);
   }
 }
 
@@ -308,7 +308,7 @@ function scenePct() {
   container.style.top  = (vy - 90) + 'px';
   _overlay.appendChild(container);
   _liveSprites++;
-  setTimeout(() => removeSprite(container), 2800);
+  setTimeout(() => removeSprite(container), 3600);
 }
 
 /** = dance: 3 ghosts orbit, result flourish handled by ui.js */

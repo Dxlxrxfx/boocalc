@@ -59,7 +59,9 @@ keyboard dot and comma input are accepted, and results follow the selected local
 
 Keyboard: digits, dot or comma, `+ - * /`, `%`, `Enter` or `=`, `Backspace`, `Escape`.
 The UI supports Spanish and English. Motion can be disabled; the operating
-system's reduced-motion preference is honored. The application is silent.
+system's reduced-motion preference is honored. Each calculator key plays a soft, synthesized “booo”. Sound can be muted
+independently of motion; the mute preference is remembered on the device.
+The sound starts only after a key press, with no audio downloads or microphone.
 
 ## Kiro development evidence
 
@@ -98,6 +100,7 @@ The app provides a playful general-purpose calculator with twelve-digit precisio
 | `src/ghosts.js` | Atlas frame map for twenty illustrated keys and ghosts. |
 | `src/assets/boocalc-sprites.webp` | Transparent illustrated atlas. |
 | `src/animator.js` | Key-to-display flight and reaction scenes. |
+| `src/sound.js` | Original quiet “booo” synthesis and bounded playback. |
 | `src/ui.js` | Input, display, language and controls. |
 | `src/index.html`, `src/style.css` | Layout and cemetery artwork. |
 | `tests/` | Arithmetic and regression checks. |
@@ -120,3 +123,8 @@ encoded as WebP with alpha. ChatGPT integrated it; Kiro did not generate this at
 atlas without separate network requests for every key. `npm run build` embeds
 the complete atlas into `dist/index.html`, preserving offline use. See
 [ASSETS.md](ASSETS.md) for layout and provenance.
+
+The ghost flight now lasts 1.2 seconds with a gentle sway, and reaction scenes
+run at a slower pace. Audio remains independent of the reduced-motion option.
+The synthesized note lasts about 0.58 seconds and rapidly replaces old voices
+when typing quickly, keeping the effect quiet.

@@ -30,3 +30,11 @@ are decorative. Motion preferences are handled by the existing animator.
 
 The build embeds the atlas as a WebP data URL so `dist/index.html` requires no
 external image files. Source development loads the WebP from `src/assets/`.
+
+## Sound
+
+`src/sound.js` synthesizes an original short “booo” in the browser from
+harmonics and a breathy onset. It uses no voice recording, stock audio, network
+service or microphone. The same source is cached and gently pitch-shifted
+between keys. At most two voices remain active, with short fades for replacements.
+Playback starts from calculator input and can be disabled with the Sound control.

@@ -14,6 +14,7 @@ import {
 
 import { initAnimator, flyGhost, playScene, setMotion, setLang as setAnimLang } from './animator.js';
 import { getButtonMarkup, getGhostMarkup } from './ghosts.js';
+import { playBoo, setBooEnabled } from './sound.js';
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
 
@@ -111,6 +112,7 @@ function t(key) { return STRINGS[_lang][key] || STRINGS.en[key] || key; }
 
 let _calcState = createState();
 let _motionOn  = true;
+let _soundOn = true;
 let _sceneVersion = 0;
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
@@ -149,6 +151,7 @@ function dispatch(action, ghostId, keyEl) {
 // ─── Key press handler ───────────────────────────────────────────────────────
 
 function handleKey(keyId, keyEl) {
+  playBoo(keyId);
   if (keyEl) {
     keyEl.classList.add('pressed');
     setTimeout(() => keyEl.classList.remove('pressed'), 110);
@@ -363,6 +366,13 @@ function buildControls(container) {
         </button>
       </label>
       <label class="ctrl-toggle">
+        <span class="ctrl-label" data-i18n="soundLabel">${t('soundLabel')}</span>
+        <button class="toggle-btn" id="ctrl-sound" aria-label="${t('soundLabel')}" aria-pressed="${_soundOn}" type="button">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">${_soundOn ? t('on') : t('off')}</span>
+        </button>
+      </label>
+      <label class="ctrl-toggle">
         <span class="ctrl-label" data-i18n="langLabel">${t('langLabel')}</span>
         <button class="toggle-btn" id="ctrl-lang" aria-label="${t('langLabel')}" aria-pressed="${_lang === 'en'}" type="button">
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -381,6 +391,15 @@ function buildControls(container) {
     this.closest('.ctrl-toggle').classList.toggle('toggle-off', !_motionOn);
   });
 
+
+  document.getElementById('ctrl-sound').addEventListener('click', function() {
+    _soundOn = !_soundOn;
+    setBooEnabled(_soundOn);
+    this.setAttribute('aria-pressed', String(_soundOn));
+    this.querySelector('.toggle-text').textContent = _soundOn ? t('on') : t('off');
+    this.closest('.ctrl-toggle').classList.toggle('toggle-off', !_soundOn);
+    try { localStorage.setItem('booCalcSound', _soundOn ? 'on' : 'off'); } catch (_) {}
+  });
 
   document.getElementById('ctrl-lang').addEventListener('click', function() {
     _lang = _lang === 'es' ? 'en' : 'es';
@@ -416,6 +435,8 @@ function refreshI18n() {
   document.getElementById('ctrl-motion').setAttribute('aria-label', t('motionLabel'));
   document.getElementById('ctrl-lang').setAttribute('aria-label', t('langLabel'));
   document.getElementById('ctrl-motion').querySelector('.toggle-text').textContent = _motionOn ? t('on') : t('off');
+  document.getElementById('ctrl-sound').setAttribute('aria-label', t('soundLabel'));
+  document.getElementById('ctrl-sound').querySelector('.toggle-text').textContent = _soundOn ? t('on') : t('off');
   document.querySelector('[data-key="com"] .key-label').textContent = _lang === 'es' ? ',' : '.';
 }
 
@@ -469,7 +490,9 @@ export function init() {
   try {
     const saved = localStorage.getItem('booCalcLang');
     if (saved === 'en' || saved === 'es') _lang = saved;
+    _soundOn = localStorage.getItem('booCalcSound') !== 'off';
   } catch(e) {}
+  setBooEnabled(_soundOn);
 
   // DOM elements
   _displayValue = document.getElementById('display-value');

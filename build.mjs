@@ -25,6 +25,7 @@ const css     = readFileSync(src('style.css'), 'utf8')
 const engine  = readFileSync(src('engine.js'),     'utf8');
 const ghosts  = readFileSync(src('ghosts.js'),     'utf8');
 const animator = readFileSync(src('animator.js'),  'utf8');
+const sound   = readFileSync(src('sound.js'),      'utf8');
 const ui      = readFileSync(src('ui.js'),         'utf8');
 
 // ─── Strip ES module syntax for inline bundle ─────────────────────────────────
@@ -33,7 +34,7 @@ const ui      = readFileSync(src('ui.js'),         'utf8');
 // Strategy:
 //   1. Remove all `import` statements (we'll concatenate in order).
 //   2. Remove all `export` keywords from declarations.
-//   3. Concatenate engine → ghosts → animator → ui in dependency order.
+//   3. Concatenate engine → ghosts → animator → sound → ui in dependency order.
 //   4. Append a call to init().
 
 function stripModuleSyntax(code, filename) {
@@ -68,6 +69,7 @@ const __booModules = Object.create(null);
 ${wrapModule('engine.js', engine)}
 ${wrapModule('ghosts.js', ghosts)}
 ${wrapModule('animator.js', animator)}
+${wrapModule('sound.js', sound)}
 ${wrapModule('ui.js', ui)}
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', __booModules['ui.js'].init, {once: true});
