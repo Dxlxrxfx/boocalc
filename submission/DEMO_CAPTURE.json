@@ -1,0 +1,17 @@
+{
+  "capture_source": "Live deployed BooCalc version 4, captured through the connected browser",
+  "capture_method": "Sequential real screenshots; original capture intervals preserved within each edited clip",
+  "audio": "None; silent demo, no simulated audio or motion",
+  "captions": "English",
+  "seconds": 54.178,
+  "observed_results": {
+    "addition": "5",
+    "subtraction": "-3",
+    "multiplication": "42",
+    "division": "4",
+    "percent": "0.5",
+    "precedence": "14",
+    "keyboard_8_div_2": "4"
+  },
+  "video": "BooCalc_Kiroween_Demo.mp4"
+}
