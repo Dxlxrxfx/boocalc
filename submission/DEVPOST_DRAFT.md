@@ -43,7 +43,7 @@ the initial twenty SVG characters, animation system, UI, styles, build script an
 
 ChatGPT prepared the brief from my direction, reviewed and refined the generated
 code, corrected state transitions and packaging, and ran arithmetic and browser
-checks on earlier versions. The result uses HTML, CSS and JavaScript with BooCalc-specific AI-generated sprite art,
+checks. The result uses HTML, CSS and JavaScript with BooCalc-specific AI-generated sprite art,
 with no external fonts, runtime dependencies or paid APIs. The current illustrated buttons and ghosts were generated with OpenAI image
 generation from my direction, then integrated by ChatGPT. Kiro authored the
 initial SVG character system before that visual replacement. The public development log identifies
@@ -79,11 +79,10 @@ callbacks had to be prevented from replacing a more recent operator's reaction.
 - A self-contained application with no external runtime dependencies.
 - Fifty-one passing arithmetic and regression tests.
 - Keyboard support, ES/EN copy and optional motion.
-- Earlier browser checks covered desktop use and 390 × 844 / 375 × 667 iframe layouts.
+- Browser checks of the current hosted desktop app covered all six reactions, arithmetic, keyboard input and independent motion/sound controls. Earlier versions were also checked at 390 × 844 / 375 × 667 iframe sizes.
 
 ## What is next
-Browser review of the latest exact-frame correction (the current preview attempt
-was blocked), plus physical-device and assistive-technology testing, followed by refinements based
+Further mobile-browser, physical-device and assistive-technology testing, followed by refinements based
 on feedback about character visibility and reaction timing.
 
 ## Links to complete before submission
@@ -94,5 +93,7 @@ on feedback about character visibility and reaction timing.
 - Public YouTube demo: pending upload and verification.
 
 The test build is publicly downloadable for judge access. The hosted owner preview
-has separate access controls. Registration, video publication and final acceptance
-of the contest rules are pending.
+has separate access controls. A silent 54-second English-captioned demo was prepared
+from real captures of the current hosted app. Public YouTube publication is pending.
+Registration was attempted after explicit approval of the rules and is awaiting
+Devpost's security verification. The project has not been submitted.
