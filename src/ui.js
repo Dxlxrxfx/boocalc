@@ -28,6 +28,7 @@ const STRINGS = {
     controlsLabel: 'Controles',
     helpTitle:    'Cómo funciona BooCalc',
     helpPct:      'Porciento: operando ÷ 100. 50% = 0,5; nunca contextual.',
+    helpNotes:    'Notas: 1 Do, 2 Re, 3 Mi, 4 Fa, 5 Sol, 6 La, 7 Si; 8 Do, 9 Re y 0 Mi en la octava siguiente.',
     helpAdd:      '+ Suma: ¡los fantasmas rebotan de emoción!',
     helpSub:      '− Resta: los fantasmas lloran 😢',
     helpMul:      '× Multiplicación: los fantasmas se abrazan 🤗',
@@ -70,6 +71,7 @@ const STRINGS = {
     controlsLabel: 'Controls',
     helpTitle:    'How BooCalc works',
     helpPct:      'Percent: operand ÷ 100. 50% = 0.5; never contextual.',
+    helpNotes:    'Notes: 1 C, 2 D, 3 E, 4 F, 5 G, 6 A, 7 B; 8 C, 9 D and 0 E in the next octave.',
     helpAdd:      '+ Add: ghosts bounce excitedly!',
     helpSub:      '− Subtract: ghosts cry 😢',
     helpMul:      '× Multiply: ghosts hug 🤗',
@@ -343,7 +345,7 @@ function buildKeypad(container) {
     btn.dataset.ghost = def.ghost;
     btn.setAttribute('aria-label', getAriaLabel(def));
 
-    btn.innerHTML = `${getButtonMarkup(def.id)}<span class="key-label" aria-hidden="true">${def.label}</span>`;
+    btn.innerHTML = `${getButtonMarkup(def.id, _lang)}<span class="key-label" aria-hidden="true">${def.label}</span>`;
 
     btn.addEventListener('click', () => handleKey(def.id, btn));
     // Touch: prevent double-fire on mobile
@@ -437,7 +439,8 @@ function refreshI18n() {
   document.getElementById('ctrl-motion').querySelector('.toggle-text').textContent = _motionOn ? t('on') : t('off');
   document.getElementById('ctrl-sound').setAttribute('aria-label', t('soundLabel'));
   document.getElementById('ctrl-sound').querySelector('.toggle-text').textContent = _soundOn ? t('on') : t('off');
-  document.querySelector('[data-key="com"] .key-label').textContent = _lang === 'es' ? ',' : '.';
+  const decimalKey = document.querySelector('[data-key="com"]');
+  decimalKey.innerHTML = `${getButtonMarkup('com', _lang)}<span class="key-label" aria-hidden="true">${_lang === 'es' ? ',' : '.'}</span>`;
 }
 
 // ─── Help popover ─────────────────────────────────────────────────────────────
@@ -456,6 +459,7 @@ function showHelp() {
       <h2 id="help-title">${t('helpTitle')}</h2>
       <ul>
         <li>📐 ${t('helpPct')}</li>
+        <li>♪ ${t('helpNotes')}</li>
         <li>🎉 ${t('helpAdd')}</li>
         <li>😢 ${t('helpSub')}</li>
         <li>🤗 ${t('helpMul')}</li>

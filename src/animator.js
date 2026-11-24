@@ -244,8 +244,8 @@ function _spawnTears(gx, gy) {
     tear.className = 'ghost-sprite tear-drop';
     tear.setAttribute('aria-hidden', 'true');
     tear.innerHTML = `<svg viewBox="0 0 10 14" width="10" height="14">
-      <ellipse cx="5" cy="8" rx="4" ry="5" fill="#80b8e8" opacity=".85"/>
-      <path d="M5,2 Q7,5 5,8 Q3,5 5,2Z" fill="#a0d0f4" opacity=".7"/>
+      <path d="M5 1C4 4 1 6 1 9A4 4 0 0 0 9 9C9 6 6 4 5 1Z" fill="#98c9e7" stroke="#79a9c8" stroke-width=".6" opacity=".9"/>
+      <path d="M4 5Q2 8 3 10" fill="none" stroke="#e3f3ff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/>
     </svg>`;
     tear.style.left = (gx - 5 + (i - 1) * 8) + 'px';
     tear.style.top  = (gy - 10) + 'px';

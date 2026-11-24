@@ -6,12 +6,30 @@ const MAX_VOICES = 2;
 let enabled = true;
 let context = null;
 let buffer = null;
+const noteBuffers = new Map();
 const voices = new Set();
 
-export function createBooSamples(sampleRate = SAMPLE_RATE) {
+export const BOO_NOTES = {
+  '1': { name: 'Do4', semitones: 0 },
+  '2': { name: 'Re4', semitones: 2 },
+  '3': { name: 'Mi4', semitones: 4 },
+  '4': { name: 'Fa4', semitones: 5 },
+  '5': { name: 'Sol4', semitones: 7 },
+  '6': { name: 'La4', semitones: 9 },
+  '7': { name: 'Si4', semitones: 11 },
+  '8': { name: 'Do5', semitones: 12 },
+  '9': { name: 'Re5', semitones: 14 },
+  '0': { name: 'Mi5', semitones: 16 },
+};
+
+export function getBooFrequency(keyId = '1') {
+  return 261.6255653005986 * 2 ** ((BOO_NOTES[keyId]?.semitones || 0) / 12);
+}
+
+export function createBooSamples(sampleRate = SAMPLE_RATE, frequencyHz = getBooFrequency()) {
   const samples = new Float32Array(Math.ceil(sampleRate * DURATION));
   const harmonics = Array.from({ length: 12 }, (_, i) => {
-    const n = i + 1, f = n * 285;
+    const n = i + 1, f = n * frequencyHz;
     // Rounded /u/ vowel, rather than a pure electronic beep.
     const formants = 0.9 * Math.exp(-0.5 * ((f - 360) / 150) ** 2)
       + 0.5 * Math.exp(-0.5 * ((f - 850) / 170) ** 2)
@@ -21,7 +39,8 @@ export function createBooSamples(sampleRate = SAMPLE_RATE) {
   let phase = 0, noise = 0, seed = 719, peak = 0;
   for (let i = 0; i < samples.length; i++) {
     const t = i / sampleRate, u = t / DURATION;
-    const frequency = 285 + 28 * Math.sin(Math.PI * u) - 50 * u;
+    // A very small vibrato preserves a recognizable musical note.
+    const frequency = frequencyHz * (1 + 0.0025 * Math.sin(Math.PI * 9 * t) * Math.sin(Math.PI * u));
     phase += Math.PI * 2 * frequency / sampleRate;
     let vowel = 0;
     for (let h = 0; h < harmonics.length; h++) {
@@ -63,20 +82,24 @@ export function playBoo(keyId = '0') {
     if (!context || context.state === 'closed') {
       context = new AudioContext({ latencyHint: 'interactive' });
       buffer = null;
+      noteBuffers.clear();
     }
     if (context.state !== 'running') context.resume().catch(() => {});
+    const frequency = getBooFrequency(keyId);
+    buffer = noteBuffers.get(frequency);
     if (!buffer) {
-      const samples = createBooSamples();
+      const samples = createBooSamples(SAMPLE_RATE, frequency);
       buffer = context.createBuffer(1, samples.length, SAMPLE_RATE);
       buffer.copyToChannel(samples, 0);
+      noteBuffers.set(frequency, buffer);
     }
     // Rapid typing replaces the oldest voice with a short fade, avoiding a roar.
     while (voices.size >= MAX_VOICES) stopVoice(voices.values().next().value, 0.025);
     const source = context.createBufferSource();
     const gain = context.createGain();
-    const variant = [...String(keyId)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
     source.buffer = buffer;
-    source.playbackRate.value = 1 + ((variant % 7) - 3) * 0.015;
+    // Pitch is synthesized into the buffer: higher notes keep the same duration.
+    source.playbackRate.value = 1;
     gain.gain.value = VOLUME;
     source.connect(gain);
     gain.connect(context.destination);

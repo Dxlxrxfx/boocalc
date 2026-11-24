@@ -37,14 +37,17 @@ npm run build
 | `%` | A central ghost asks: “Were you expecting me to do something?” |
 | `=` | Ghosts dance as the result appears. |
 
+Number keys play musical “booo” notes: 1 C, 2 D, 3 E, 4 F, 5 G, 6 A,
+7 B, then 8 C, 9 D and 0 E in the next octave. Notes keep the same duration.
+
 The original Spanish percent joke is **“Esperabas que hiciera algo?”**.
 Percent still performs a real calculation.
 
 The cemetery uses weathered stone, moss, muted lavender, ivory mist and a smiling
 moon. The characters are friendly. The same key consistently summons the same
 character, with a different face, accessory or silhouette for every key.
-Each illustrated stone and ghost is isolated from a shared eight-column,
-five-row atlas. The engraved decimal key uses a comma in both UI languages;
+Each illustrated stone and ghost uses its own complete source rectangle and
+isolation path. The decimal stone shows a comma in Spanish and a point in English;
 keyboard dot and comma input are accepted, and results follow the selected locale.
 
 ## Calculator behavior
@@ -97,8 +100,8 @@ The app provides a playful general-purpose calculator with twelve-digit precisio
 | File | Purpose |
 | --- | --- |
 | `src/engine.js` | Pure arithmetic and input state. |
-| `src/ghosts.js` | Atlas frame map for twenty illustrated keys and ghosts. |
-| `src/assets/boocalc-sprites.webp` | Transparent illustrated atlas. |
+| `src/ghosts.js`, `src/sprite-frames.js` | Complete bitmap frames and isolation paths. |
+| `src/assets/boocalc-sprites.webp`, `src/assets/boocalc-supplement.webp` | Original art, individual operator ghosts and decimal-point stone. |
 | `src/animator.js` | Key-to-display flight and reaction scenes. |
 | `src/sound.js` | Original quiet “booo” synthesis and bounded playback. |
 | `src/ui.js` | Input, display, language and controls. |
@@ -113,18 +116,21 @@ MIT. Copyright © 2026 Rafael Enrique Arancibia Macías. See [LICENSE](LICENSE).
 
 ## Illustrated sprite integration
 
-The current version replaces the initial CSS keys and SVG ghost characters with
-the user-approved, AI-generated BooCalc sprite sheet. `src/assets/boocalc-sprites.webp`
-contains twenty stone buttons and twenty matching ghost frames. The artwork was
-generated specifically for this project with OpenAI image generation, then
-encoded as WebP with alpha. ChatGPT integrated it; Kiro did not generate this atlas.
+The current version uses the user-approved AI-generated BooCalc artwork. A
+supplement provides individual ×/÷ ghosts and a decimal-point stone. ChatGPT
+integrated these images; Kiro authored the initial SVG character system.
 
-`src/ghosts.js` maps each key to its button and character. CSS crops the intact
-atlas without separate network requests for every key. `npm run build` embeds
-the complete atlas into `dist/index.html`, preserving offline use. See
-[ASSETS.md](ASSETS.md) for layout and provenance.
+Exact rectangles and native SVG clipping isolate the bitmap artwork, retain
+complete tails, broom and moss, and remove neighboring fragments. Frames have
+transparent display padding. Source images are not rewritten. The normal build
+embeds both images for offline use. See [ASSETS.md](ASSETS.md).
 
-The ghost flight now lasts 1.2 seconds with a gentle sway, and reaction scenes
-run at a slower pace. Audio remains independent of the reduced-motion option.
-The synthesized note lasts about 0.58 seconds and rapidly replaces old voices
-when typing quickly, keeping the effect quiet.
+The ghost flight lasts 1.2 seconds with a gentle sway. Reactions run at a slower
+pace. Audio is independent of motion. Each note lasts 0.58 seconds; higher notes
+are synthesized directly instead of speeding up a recording.
+
+Latest validation: all 51 arithmetic tests passed, 41 active frame masks retain
+their measured source silhouettes with no foreign solid pixels, and ten generated
+notes match their intended frequencies. Full browser verification of this latest
+change was blocked by the browser's URL policy. The earlier browser checks above
+predate the frame correction. See [ASSET_VALIDATION.md](ASSET_VALIDATION.md).

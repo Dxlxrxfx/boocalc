@@ -435,7 +435,7 @@ body {
   z-index: 101;
 }
 
-.ghost-sprite svg {
+.tear-drop>svg {
   display: block;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
 }
@@ -801,7 +801,7 @@ body {
 .app-header h1 span {color:#bbc9ae}
 .app-header p {font-size:.9rem;line-height:1.4;color:#c0c8bc;margin-top:10px;letter-spacing:.01em}
 .brand-ghost {display:inline-block;vertical-align:middle;position:absolute;width:42px;height:50px;left:calc(50% - 145px);top:24px;transform:rotate(-12deg)}
-.brand-ghost svg {width:100%;height:100%}
+.brand-ghost>.atlas-tile>svg {width:100%;height:100%}
 .stage {max-width:1160px;align-items:center;flex:1;padding:18px 20px 34px}
 .scene-deco {display:none}
 .moon {width:70px;height:70px;top:11%;right:17%;background:radial-gradient(circle at 35% 30%,#f0edce,#d4d3b7);box-shadow:0 0 55px #dedbc529,0 0 120px #dedbc517;z-index:-1}
@@ -869,17 +869,12 @@ body {
 .scene-pct-container {animation-duration:3.6s}
 
 /* Illustrated assets from the user-approved BooCalc sprite sheet. */
-:root { --boocalc-atlas: url("assets/boocalc-sprites.webp"); }
 .atlas-tile {
   display:block;
   flex-shrink:0;
-  background-image:var(--boocalc-atlas);
-  background-repeat:no-repeat;
-  background-size:800% 500%;
-  background-position:var(--atlas-x) var(--atlas-y);
   pointer-events:none;
 }
-.atlas-tile--ghost {clip-path:inset(3% 1% 1% 1%)}
+.atlas-tile>svg {display:block;width:100%;height:100%;overflow:visible}
 .key {
   height:84px;
   padding:0;
@@ -904,11 +899,16 @@ body {
 .ghost-sprite>.atlas-tile {width:72px;height:72px;filter:drop-shadow(0 3px 5px #11192366)}
 .scene-pct-container>.atlas-tile {width:112px;height:112px}
 .brand-ghost .atlas-tile {width:100%;height:100%}
+.brand-ghost {height:42px}
+#ctrl-sound[aria-pressed="false"] .toggle-track,
+#ctrl-motion[aria-pressed="false"] .toggle-track {background:#3b4547!important}
 @media(max-width:600px) {
+  .brand-ghost {height:36px}
   .key {height:70px}
   #keypad {gap:7px 8px}
 }
 @media(max-height:740px) {
+  .brand-ghost {height:31px}
   .key {height:54px}
   #keypad {gap:7px 8px}
 }

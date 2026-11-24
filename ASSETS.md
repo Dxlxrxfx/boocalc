@@ -1,40 +1,67 @@
 # BooCalc illustrated assets
 
-`src/assets/boocalc-sprites.webp` is a transparent 1586 × 992 pixel atlas,
-encoded from the BooCalc-specific PNG generated with OpenAI image generation
-at Rafael Arancibia's request. The direction was friendly kawaii ghosts and
-engraved cemetery stones with moss, muted lavender and ivory. It is AI-generated
-artwork, not a third-party stock illustration or Kiro-generated SVG.
+The original `src/assets/boocalc-sprites.webp` is the 1586 × 992 transparent
+image generated specifically for BooCalc with OpenAI image generation, at Rafael
+Arancibia's request. The source artwork is retained unchanged. Its original
+8 × 5 packing is **not** used as a regular grid by the current renderer.
 
-The intact image contains eight columns and five rows. Read each row as four
-button/ghost pairs; columns 1, 3, 5, 7 are buttons, and the next column is each
-button's ghost. Rows follow the keypad:
+`src/assets/boocalc-supplement.webp` is a second, 2172 × 724 transparent generated
+image containing a single lavender multiplication ghost, a single blue division
+ghost, and a matching decimal-point stone. It replaces the two fused character
+groups in runtime use and supplies the English decimal key.
 
-| Row | Keys in pair order |
-| --- | --- |
-| 1 | AC, ±, %, ÷ |
-| 2 | 7, 8, 9, × |
-| 3 | 4, 5, 6, − |
-| 4 | 1, 2, 3, + |
-| 5 | Backspace, 0, comma, = |
+## Complete frames and isolation
 
-`src/ghosts.js` contains the frame map. The CSS uses percentage background
-positions and an eight-by-five background size to isolate frames without
-modifying the artwork. The animation layer moves those frames from the pressed
-key and runs the existing bounce, tears, hug, groups, joke and dance scenes.
+`src/sprite-frames.js` records exact source rectangles and vector isolation paths.
+`src/ghosts.js` displays the existing bitmap through those paths inside a square
+SVG viewport with transparent space. The SVG is a clipping container for the
+illustrated raster image; it is not a replacement drawing of the character.
 
-The comma is engraved into the decimal-key image in both UI languages. English
-results still use a decimal point, and both dot/comma keyboard input work.
-Button names and results remain HTML text for assistive technology; image frames
-are decorative. Motion preferences are handled by the existing animator.
+This retains the complete broom, tails and moss, including portions crossing
+the original grid lines. Per-asset isolation excludes neighboring drawings and
+faint connecting edge pixels. The former global percentage clip is removed.
+Every rendered instance has a unique clipping ID, including repeated ghosts.
+The header also uses a square container.
 
-The build embeds the atlas as a WebP data URL so `dist/index.html` requires no
-external image files. Source development loads the WebP from `src/assets/`.
+There are **41 active frames**: twenty buttons, twenty individual ghost variants,
+and an English point variant for the decimal button. The original comma remains
+in Spanish. Legacy fused ×/÷ art remains in the original source image but is no
+longer selected by the renderer.
 
-## Sound
+`tools/build-sprite-frames.py` regenerates the metadata from fixed ownership of
+source alpha components. It uses Pillow, NumPy and SciPy only for optional asset
+authoring. The committed metadata and normal Node build require no Python or
+third-party browser runtime dependencies. `src/assets/frame-validation.json`
+contains the per-frame geometry checks.
 
-`src/sound.js` synthesizes an original short “booo” in the browser from
-harmonics and a breathy onset. It uses no voice recording, stock audio, network
-service or microphone. The same source is cached and gently pitch-shifted
-between keys. At most two voices remain active, with short fades for replacements.
-Playback starts from calculator input and can be disabled with the Sound control.
+The six unused legacy side-decoration SVGs were removed from the HTML. The main
+cemetery background, trees, flowers and smiling moon remain. Small tear effects
+have a shaded body and highlight to fit the painted characters more closely.
+
+## Musical sound
+
+`src/sound.js` synthesizes an original short “booo” with rounded vowel harmonics,
+a breathy onset and a very small vibrato. It uses no recording, stock sound,
+network service or microphone. Number keys play:
+
+| Key | Solfège | Pitch | Frequency, Hz |
+| --- | --- | --- | --- |
+| 1 | Do | C4 | 261.63 |
+| 2 | Re | D4 | 293.66 |
+| 3 | Mi | E4 | 329.63 |
+| 4 | Fa | F4 | 349.23 |
+| 5 | Sol | G4 | 392.00 |
+| 6 | La | A4 | 440.00 |
+| 7 | Si | B4 | 493.88 |
+| 8 | Do | C5 | 523.25 |
+| 9 | Re | D5 | 587.33 |
+| 0 | Mi | E5 | 659.26 |
+
+Other calculator keys use C4. A buffer is synthesized and cached separately for
+each note, so higher pitches keep the same **0.58-second** duration. Audio is
+quiet, starts from a key gesture, has bounded overlapping voices with short
+replacement fades, and has a persisted mute control independent of motion.
+The control's track now derives its color directly from `aria-pressed` on reload.
+
+The standalone build embeds both image sources and all JavaScript in one HTML
+file for offline use. See `ASSET_VALIDATION.md` for checks and verification limits.

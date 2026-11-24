@@ -18,11 +18,13 @@ const dist  = p => join(__dir, 'dist', p);
 // ─── Read source files ────────────────────────────────────────────────────────
 
 const html    = readFileSync(src('index.html'),    'utf8');
-const atlas   = readFileSync(src('assets/boocalc-sprites.webp'));
-const atlasUrl = `data:image/webp;base64,${atlas.toString('base64')}`;
-const css     = readFileSync(src('style.css'), 'utf8')
-  .replace('url("assets/boocalc-sprites.webp")', `url("${atlasUrl}")`);
+const css     = readFileSync(src('style.css'), 'utf8');
 const engine  = readFileSync(src('engine.js'),     'utf8');
+let frames = readFileSync(src('sprite-frames.js'), 'utf8');
+for (const filename of ['boocalc-sprites.webp', 'boocalc-supplement.webp']) {
+  const url = `data:image/webp;base64,${readFileSync(src('assets/' + filename)).toString('base64')}`;
+  frames = frames.replace(JSON.stringify('assets/' + filename), JSON.stringify(url));
+}
 const ghosts  = readFileSync(src('ghosts.js'),     'utf8');
 const animator = readFileSync(src('animator.js'),  'utf8');
 const sound   = readFileSync(src('sound.js'),      'utf8');
@@ -34,7 +36,7 @@ const ui      = readFileSync(src('ui.js'),         'utf8');
 // Strategy:
 //   1. Remove all `import` statements (we'll concatenate in order).
 //   2. Remove all `export` keywords from declarations.
-//   3. Concatenate engine → ghosts → animator → sound → ui in dependency order.
+//   3. Concatenate engine → sprite-frames → ghosts → animator → sound → ui in dependency order.
 //   4. Append a call to init().
 
 function stripModuleSyntax(code, filename) {
@@ -67,6 +69,7 @@ const inlineScript = `
 'use strict';
 const __booModules = Object.create(null);
 ${wrapModule('engine.js', engine)}
+${wrapModule('sprite-frames.js', frames)}
 ${wrapModule('ghosts.js', ghosts)}
 ${wrapModule('animator.js', animator)}
 ${wrapModule('sound.js', sound)}

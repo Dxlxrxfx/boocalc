@@ -30,7 +30,8 @@ Equals makes them dance while the result appears. Percent performs its calculati
 and summons a central character asking, “Were you expecting me to do something?”
 
 The UI has Spanish and English modes, an animation toggle and an independent
-sound toggle. Each key plays a quiet synthesized “booo”; muting it is remembered. Decorative motion
+sound toggle. Each key plays a quiet synthesized “booo”; muting it is remembered. Number
+keys follow C, D, E, F, G, A, B and the next octave, with consistent note duration. Decorative motion
 is separated from arithmetic and honors the operating system's reduced-motion
 preference. Results remain readable, and the app can run offline as one HTML file.
 
@@ -81,7 +82,8 @@ callbacks had to be prevented from replacing a more recent operator's reaction.
 - Verified desktop use and 390 × 844 / 375 × 667 browser iframe layouts.
 
 ## What is next
-Physical-device and assistive-technology testing, followed by refinements based
+Browser review of the latest exact-frame correction (the current preview attempt
+was blocked), plus physical-device and assistive-technology testing, followed by refinements based
 on feedback about character visibility and reaction timing.
 
 ## Links to complete before submission

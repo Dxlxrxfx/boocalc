@@ -52,3 +52,13 @@ Default Spanish. ES/EN toggle available. Percent joke kept verbatim in Spanish.
 - Fits 390px mobile without horizontal scroll
 - Ghost flight uses real DOM geometry, accurate after resize/scroll
 - Animations on pointer-events:none layer, bounded, no runaway counts
+
+
+## Later user direction (ChatGPT integration, 24 November 2026)
+
+Use exact complete bitmap frames with transparent display padding and isolation,
+not the original atlas grid divisions. × and ÷ each have a single character.
+Show comma/point art according to ES/EN and preserve a square header character.
+Retain the slower 1.2-second flight and optional quiet key sounds. Digits 1–7
+play Do/Re/Mi/Fa/Sol/La/Si in octave 4; 8/9/0 play Do/Re/Mi in octave 5.
+All notes keep a 0.58-second duration. Other keys use Do4.

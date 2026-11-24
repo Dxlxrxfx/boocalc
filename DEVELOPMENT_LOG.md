@@ -198,3 +198,37 @@ displayed 1234567890 without application console errors. With motion off,
 The additional Sound control fits both 390×844 and 375×667 iframe layouts.
 Audio waveform/gain were checked programmatically; subjective playback on a
 physical device has not been assessed.
+
+
+## Asset corrections and musical notes — 24 November 2026
+
+The asset audit found seven clipped ghost silhouettes, neighboring fragments in
+7/6/2, minor moss cuts, an uneven header aspect ratio, a fixed comma in English,
+and a mute-track color that reset incorrectly after reload.
+
+ChatGPT replaced the uniform grid crop with exact rectangles and native SVG
+isolation paths over the unchanged bitmap. Transparent display space surrounds
+each frame. The authoring helper assigns faint edges to their nearest solid
+component and emits exact merged scanline rectangles. Per-instance clipping IDs
+are unique. All 41 active frames retained their alpha>=64 silhouette pixels and
+excluded all other solid components in the geometry checks. A diagnostic render
+of the calculated masks was inspected, including the complete broom and tails.
+
+OpenAI image generation supplied a matching supplemental image: individual
+×/÷ ghosts and a decimal-point stone. Spanish/English switching now changes the
+visible decimal artwork. The header is square, mute-track color follows its
+pressed state directly, unused side SVGs were removed, and tear accents refined.
+
+The user's new musical direction is implemented as 1–7 C4/D4/E4/F4/G4/A4/B4,
+8 C5, 9 D5 and 0 E5. Operators use C4. Each note has its own cached 0.58-second
+buffer, preserving duration across pitches. Spectral checks found the generated
+notes within about 1.5 cents of their targets with the subtle vibrato enabled.
+Peak playback level remains approximately 0.0704 per voice.
+
+All 51 arithmetic tests passed and the standalone build syntax check passed.
+The browser rejected local preview access under its URL security policy; no
+alternate browser, direct CDP or other bypass was attempted. Current full-page
+rendering, post-reload interaction and physical-device listening remain unverified.
+The available offline SVG renderer ignores clip paths, so its output was discarded
+as a visual check. Only decoded mask geometry and source-based diagnostic renders
+were used to inspect the isolated artwork.

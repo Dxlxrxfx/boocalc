@@ -1,0 +1,498 @@
+{
+  "threshold": 64,
+  "active_frames": 41,
+  "frames": [
+    {
+      "frame": "ac:button",
+      "solid_pixels": 25706,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        9,
+        17,
+        195,
+        184
+      ]
+    },
+    {
+      "frame": "ac:ghost",
+      "solid_pixels": 20554,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        215,
+        14,
+        172,
+        196
+      ]
+    },
+    {
+      "frame": "pm:button",
+      "solid_pixels": 25571,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        406,
+        18,
+        194,
+        183
+      ]
+    },
+    {
+      "frame": "pm:ghost",
+      "solid_pixels": 17192,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        602,
+        19,
+        172,
+        182
+      ]
+    },
+    {
+      "frame": "pct:button",
+      "solid_pixels": 25434,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        802,
+        18,
+        194,
+        183
+      ]
+    },
+    {
+      "frame": "pct:ghost",
+      "solid_pixels": 20875,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1004,
+        13,
+        176,
+        188
+      ]
+    },
+    {
+      "frame": "div:button",
+      "solid_pixels": 25446,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1199,
+        18,
+        194,
+        183
+      ]
+    },
+    {
+      "frame": "div:ghost",
+      "solid_pixels": 182448,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        845,
+        94,
+        507,
+        534
+      ]
+    },
+    {
+      "frame": "7:button",
+      "solid_pixels": 25559,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        9,
+        219,
+        195,
+        183
+      ]
+    },
+    {
+      "frame": "7:ghost",
+      "solid_pixels": 18456,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        204,
+        227,
+        189,
+        173
+      ]
+    },
+    {
+      "frame": "8:button",
+      "solid_pixels": 25446,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        406,
+        219,
+        194,
+        183
+      ]
+    },
+    {
+      "frame": "8:ghost",
+      "solid_pixels": 21733,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        603,
+        226,
+        172,
+        174
+      ]
+    },
+    {
+      "frame": "9:button",
+      "solid_pixels": 25379,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        803,
+        219,
+        194,
+        182
+      ]
+    },
+    {
+      "frame": "9:ghost",
+      "solid_pixels": 18419,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1016,
+        220,
+        150,
+        190
+      ]
+    },
+    {
+      "frame": "mul:button",
+      "solid_pixels": 25428,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1199,
+        220,
+        195,
+        181
+      ]
+    },
+    {
+      "frame": "mul:ghost",
+      "solid_pixels": 186493,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        113,
+        99,
+        530,
+        534
+      ]
+    },
+    {
+      "frame": "4:button",
+      "solid_pixels": 25382,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        9,
+        418,
+        195,
+        181
+      ]
+    },
+    {
+      "frame": "4:ghost",
+      "solid_pixels": 19578,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        204,
+        419,
+        189,
+        183
+      ]
+    },
+    {
+      "frame": "5:button",
+      "solid_pixels": 25384,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        406,
+        418,
+        195,
+        181
+      ]
+    },
+    {
+      "frame": "5:ghost",
+      "solid_pixels": 20216,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        604,
+        419,
+        182,
+        189
+      ]
+    },
+    {
+      "frame": "6:button",
+      "solid_pixels": 25256,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        803,
+        418,
+        195,
+        181
+      ]
+    },
+    {
+      "frame": "6:ghost",
+      "solid_pixels": 19303,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        997,
+        426,
+        185,
+        173
+      ]
+    },
+    {
+      "frame": "sub:button",
+      "solid_pixels": 25358,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1199,
+        418,
+        195,
+        181
+      ]
+    },
+    {
+      "frame": "sub:ghost",
+      "solid_pixels": 20479,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1395,
+        428,
+        180,
+        167
+      ]
+    },
+    {
+      "frame": "1:button",
+      "solid_pixels": 24981,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        9,
+        615,
+        195,
+        179
+      ]
+    },
+    {
+      "frame": "1:ghost",
+      "solid_pixels": 17600,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        209,
+        612,
+        181,
+        192
+      ]
+    },
+    {
+      "frame": "2:button",
+      "solid_pixels": 25001,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        406,
+        614,
+        194,
+        180
+      ]
+    },
+    {
+      "frame": "2:ghost",
+      "solid_pixels": 19929,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        601,
+        621,
+        167,
+        172
+      ]
+    },
+    {
+      "frame": "3:button",
+      "solid_pixels": 24906,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        803,
+        614,
+        195,
+        180
+      ]
+    },
+    {
+      "frame": "3:ghost",
+      "solid_pixels": 20970,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        992,
+        612,
+        196,
+        185
+      ]
+    },
+    {
+      "frame": "add:button",
+      "solid_pixels": 25021,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1199,
+        614,
+        195,
+        180
+      ]
+    },
+    {
+      "frame": "add:ghost",
+      "solid_pixels": 19345,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1384,
+        609,
+        196,
+        181
+      ]
+    },
+    {
+      "frame": "bs:button",
+      "solid_pixels": 24846,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        9,
+        805,
+        194,
+        179
+      ]
+    },
+    {
+      "frame": "bs:ghost",
+      "solid_pixels": 14922,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        194,
+        823,
+        204,
+        151
+      ]
+    },
+    {
+      "frame": "0:button",
+      "solid_pixels": 24899,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        406,
+        805,
+        194,
+        179
+      ]
+    },
+    {
+      "frame": "0:ghost",
+      "solid_pixels": 17600,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        598,
+        806,
+        181,
+        172
+      ]
+    },
+    {
+      "frame": "com:button",
+      "solid_pixels": 24837,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        803,
+        805,
+        194,
+        179
+      ]
+    },
+    {
+      "frame": "com:ghost",
+      "solid_pixels": 17590,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        992,
+        808,
+        184,
+        173
+      ]
+    },
+    {
+      "frame": "eq:button",
+      "solid_pixels": 24839,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1199,
+        805,
+        195,
+        179
+      ]
+    },
+    {
+      "frame": "eq:ghost",
+      "solid_pixels": 15832,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1395,
+        795,
+        179,
+        191
+      ]
+    },
+    {
+      "frame": "com-dot:button",
+      "solid_pixels": 236098,
+      "solid_pixels_lost": 0,
+      "foreign_pixels": 0,
+      "rect": [
+        1514,
+        85,
+        575,
+        543
+      ]
+    }
+  ]
+}
