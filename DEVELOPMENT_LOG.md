@@ -232,3 +232,23 @@ rendering, post-reload interaction and physical-device listening remain unverifi
 The available offline SVG renderer ignores clip paths, so its output was discarded
 as a visual check. Only decoded mask geometry and source-based diagnostic renders
 were used to inspect the isolated artwork.
+
+## Continuous presentation and recording
+
+After the user requested a fluid demonstration, ChatGPT added a separate
+`demo.html` presentation. It runs the real calculator for approximately 95 seconds,
+with English captions, complete reaction timings and checks of displayed answers.
+It does not replace the calculator's normal page or supply mathematical results.
+
+The recording button uses browser-granted tab capture and MediaRecorder. The
+original live boo gain is connected to both the speaker output and a recording
+destination; no microphone or system-audio capture is requested. Cancellation
+releases the capture tracks and interrupted clips are labeled partial.
+Completed clips are downloaded locally, with a playback/download control retained.
+The page does not upload a recording or submit an entry.
+
+This presentation and recorder were authored by ChatGPT, not Kiro. Kiro's original
+contributions are described above and retained in the root `.kiro` directory.
+Automated checks cover arithmetic in the demo, the full scene timing budget and
+the recording audio route. Native screen selection and completed recording require
+browser permission and remain to be verified by actually recording a clip.

@@ -29,6 +29,8 @@ const ghosts  = readFileSync(src('ghosts.js'),     'utf8');
 const animator = readFileSync(src('animator.js'),  'utf8');
 const sound   = readFileSync(src('sound.js'),      'utf8');
 const ui      = readFileSync(src('ui.js'),         'utf8');
+const demo    = readFileSync(src('demo.js'),       'utf8');
+const demoCss = readFileSync(src('demo.css'),      'utf8');
 
 // ─── Strip ES module syntax for inline bundle ─────────────────────────────────
 //
@@ -65,7 +67,7 @@ function wrapModule(name, code) {
   return `__booModules[${JSON.stringify(name)}] = (() => {\n${stripModuleSyntax(code, name)}\nreturn {${names.join(',')}};\n})();`;
 }
 
-const inlineScript = `
+function makeInlineScript(withDemo = false) { return `
 'use strict';
 const __booModules = Object.create(null);
 ${wrapModule('engine.js', engine)}
@@ -74,31 +76,44 @@ ${wrapModule('ghosts.js', ghosts)}
 ${wrapModule('animator.js', animator)}
 ${wrapModule('sound.js', sound)}
 ${wrapModule('ui.js', ui)}
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', __booModules['ui.js'].init, {once: true});
-} else {
+${withDemo ? wrapModule('demo.js', demo) : ''}
+function bootBooCalc() {
   __booModules['ui.js'].init();
+  ${withDemo ? "__booModules['demo.js'].initDemo();" : ''}
 }
-`;
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootBooCalc, {once: true});
+} else {
+  bootBooCalc();
+}
+`; }
+const inlineScript = makeInlineScript();
+const demoScript = makeInlineScript(true);
 
 // Fail the build on invalid standalone JavaScript rather than ship a blank keypad.
 new Script(inlineScript, {filename: 'boocalc-standalone.js'});
+new Script(demoScript, {filename: 'boocalc-demo-standalone.js'});
 
 // ─── Inject into HTML ─────────────────────────────────────────────────────────
 
+function makeDocument(styles, script) {
 let output = html;
 
 // Replace <link rel="stylesheet" href="style.css"> with inline <style>
 output = output.replace(
   /<link\s+rel="stylesheet"\s+href="style\.css"\s*\/?>/,
-  () => `<style>\n${css}\n</style>`
+  () => `<style>\n${styles}\n</style>`
 );
 
 // Replace <script type="module"> ... </script> with inline script
 output = output.replace(
   /<script\s+type="module"[\s\S]*?<\/script>/,
-  () => `<script>\n${inlineScript.replace(/<\/script/gi, '<\\/script')}\n</script>`
+  () => `<script>\n${script.replace(/<\/script/gi, '<\\/script')}\n</script>`
 );
+return output;
+}
+const output = makeDocument(css, inlineScript);
+const demoOutput = makeDocument(css + '\n' + demoCss, demoScript);
 
 // Update html lang — keep as-is (es)
 
@@ -106,5 +121,7 @@ output = output.replace(
 
 mkdirSync(dist(''), { recursive: true });
 writeFileSync(dist('index.html'), output, 'utf8');
+writeFileSync(dist('demo.html'), demoOutput, 'utf8');
 
 console.log(`✓ Built dist/index.html (${(output.length / 1024).toFixed(1)} KB)`);
+console.log(`✓ Built dist/demo.html (${(demoOutput.length / 1024).toFixed(1)} KB)`);

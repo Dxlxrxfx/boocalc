@@ -6,8 +6,38 @@ const MAX_VOICES = 2;
 let enabled = true;
 let context = null;
 let buffer = null;
+let recordingDestination = null;
 const noteBuffers = new Map();
 const voices = new Set();
+
+function ensureAudioContext() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) throw new Error('Web Audio is unavailable');
+  if (!context || context.state === 'closed') {
+    context = new AudioContext({ latencyHint: 'interactive' });
+    buffer = null;
+    recordingDestination = null;
+    noteBuffers.clear();
+  }
+  if (context.state !== 'running') context.resume().catch(() => {});
+  return context;
+}
+
+/** Records the same live boo gains sent to the speakers; never accesses a mic. */
+export function getBooCaptureStream() {
+  ensureAudioContext();
+  if (!recordingDestination || recordingDestination.stream.getAudioTracks().every(t => t.readyState === 'ended')) {
+    recordingDestination = context.createMediaStreamDestination();
+  }
+  return recordingDestination.stream;
+}
+
+export function stopBooCapture() {
+  if (!recordingDestination) return;
+  recordingDestination.stream.getTracks().forEach(track => track.stop());
+  recordingDestination.disconnect();
+  recordingDestination = null;
+}
 
 export const BOO_NOTES = {
   '1': { name: 'Do4', semitones: 0 },
@@ -77,14 +107,7 @@ export function setBooEnabled(value) {
 export function playBoo(keyId = '0') {
   if (!enabled) return false;
   try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return false;
-    if (!context || context.state === 'closed') {
-      context = new AudioContext({ latencyHint: 'interactive' });
-      buffer = null;
-      noteBuffers.clear();
-    }
-    if (context.state !== 'running') context.resume().catch(() => {});
+    ensureAudioContext();
     const frequency = getBooFrequency(keyId);
     buffer = noteBuffers.get(frequency);
     if (!buffer) {
@@ -103,6 +126,7 @@ export function playBoo(keyId = '0') {
     gain.gain.value = VOLUME;
     source.connect(gain);
     gain.connect(context.destination);
+    if (recordingDestination) gain.connect(recordingDestination);
     const voice = { source, gain };
     voices.add(voice);
     source.onended = () => {
